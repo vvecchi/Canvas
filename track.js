@@ -6,7 +6,7 @@ function Segment(){
 function Track(){
     this.pos = 0;
     this.horizon = 132;
-    var numsegs = 10;
+    var numsegs = 6;
     var totalDist = 0;
     var yWorld = - 50;
     printz = true;
@@ -17,13 +17,18 @@ function Track(){
     totalDist = zs[this.horizon - 1];
     var segsize = totalDist/numsegs;
     var segments = new Array();
-    for(i = 0;i < numsegs; i++){
+    var nexty = 239;
+    for(i = 0;i < numsegs*2; i++){
         segment = new Segment();
-        segment.z = i*segsize+1;
-        segment.y = this.horizon - (yWorld/segment.z);
+        segment.z = i*segsize+0.001;
+        segment.y = nexty;
+        nexty -= segsize/zs[parseInt(240 - segment.y)];
         segment.shaded = i%2;
         segments[i] = segment;
     }
+    alert(totalDist);
+    alert(segsize);
+    alert(nexty);
     this.draw = function(){
         var canvas = document.getElementById('tutorial');
         var ctx = canvas.getContext('2d');
@@ -32,27 +37,32 @@ function Track(){
         for(i = 1; i <= this.horizon;  i++){
             ctx.drawImage(img,0, canvas.height - i, canvas.width,1, 0,canvas.height - i,canvas.width,1);
         }
-        for(i = 0; i < numsegs;i++){
+        for(i = 0; i < numsegs*2;i++){
             ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-            if(segments[i].shaded == 1){
-                ctx.fillRect (0,segment.y , canvas.width, 5);
-//                alert("i="+i+" y="+segment.y+" z="+segment.z+" height on screnn ="+segsize/zs[segment.y - 132]);
+            if(segments[i].shaded == 0){
+                var sizeOnScreen = segsize/zs[parseInt(240 - segments[i].y)];
+                if(sizeOnScreen < 1)sizeOnScreen = 1;
+                ctx.fillRect (0, segments[i].y - sizeOnScreen, canvas.width, sizeOnScreen);
+             //   alert(""+0+","+ (segments[i].y - sizeOnScreen)+","+canvas.width+","+sizeOnScreen);
             }
         }
         ctx.drawImage(img,0, 0, canvas.width, this.horizon, 0, 0, canvas.width, this.horizon);
         divzs = document.getElementById('zs');
         if(printz){
             printz = false;
-            divzs.innerHTML = "";
+            divzs.innerHTML = "totaldist = " + totalDist + "<br>";
             for(var i in segments){
-                divzs.innerHTML += "segz = "+segments[i].z + " segy = "+segments[i].y +" height on screen ="+segsize/zs[parseInt(segment.y-132)] + "<br>"
+                divzs.innerHTML += "segz = "+segments[i].z + " segy = "+ (segments[i].y) +"<br>";
+                divzs.innerHTML += "yWorld/segment.z = " + (yWorld/segments[i].z) + "<br>";
+                divzs.innerHTML += "segsize = " + segsize + " height on screen ="+segsize/zs[parseInt(240 - segments[i].y)] + "<br>";
             }
             for(var i in zs){
                 divzs.innerHTML += zs[i]+"<br>";
             }
         }
-     }
-     this.update = function(){
+    }
+     
+    this.update = function(){
         
-     }
+    }
 }
