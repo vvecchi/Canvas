@@ -2,67 +2,64 @@ function Segment(){
     this.y = 0;
     this.z = 0;
     this.shaded = 0;
+    this.sizeOnScreen = 0;
 }
 function Track(){
+    
     this.pos = 0;
-    this.horizon = 132;
-    var numsegs = 6;
+    this.horizon = 130;
+    
+    var lastPos = 0;
+    var numsegs = 10;
     var totalDist = 0;
-    var yWorld = - 50;
-    printz = true;
+    var yWorld = - 500;
+    var printz = true;
     var zs = new Array()
-    for(i = 0; i < this.horizon; i++){
-        zs[i] = yWorld/(i - this.horizon);
+    for(i = 0; i < 240; i++){
+        zs[i] = yWorld/(i - (240/2));
     }
-    totalDist = zs[this.horizon - 1];
-    var segsize = totalDist/numsegs;
+    totalDist = - yWorld;
+    var segsize = totalDist/(numsegs*12);
     var segments = new Array();
-    var nexty = 239;
-    for(i = 0;i < numsegs*2; i++){
+    for(i = 0;i < numsegs; i++){
         segment = new Segment();
-        segment.z = i*segsize+0.001;
-        segment.y = nexty;
-        nexty -= segsize/zs[parseInt(240 - segment.y)];
+        if(i == 0)segment.z = 0.01;
+        else segment.z = i*segsize;
         segment.shaded = i%2;
         segments[i] = segment;
     }
-    alert(totalDist);
-    alert(segsize);
-    alert(nexty);
+    var firstIndex = 0;
+    
     this.draw = function(){
         var canvas = document.getElementById('tutorial');
         var ctx = canvas.getContext('2d');
         var img = document.getElementById('track');
+        var imgdark = document.getElementById('trackdark');
+        var y = 1;//(yWorld/segments[0].z) + (this.horizon);
+        
+        for(i = 0; i < numsegs -1 ;i++){
+            var ynew = (yWorld/segments[i+1].z) + (this.horizon);
+            var sizeOnScreen = ynew - y;
+            segments[i].sizeOnScreen = sizeOnScreen;
+            segments[i].y = y;
+            
+            var drawImg = img
+            if(segments[i].shaded == 1){
+                drawImg = imgdark;
+            }
+            for(j = 0; j <= segments[i].sizeOnScreen;  j++){
+                ypos = canvas.height - j - y;
+                ctx.drawImage(drawImg, 0, ypos, canvas.width,1, 0, ypos, canvas.width,1);
+            }
+            y = ynew;
+        }
+        
         ctx.drawImage(img,0, 0, canvas.width, this.horizon, 0, 0, canvas.width, this.horizon);
-        for(i = 1; i <= this.horizon;  i++){
-            ctx.drawImage(img,0, canvas.height - i, canvas.width,1, 0,canvas.height - i,canvas.width,1);
-        }
-        for(i = 0; i < numsegs*2;i++){
-            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-            if(segments[i].shaded == 0){
-                var sizeOnScreen = segsize/zs[parseInt(240 - segments[i].y)];
-                if(sizeOnScreen < 1)sizeOnScreen = 1;
-                ctx.fillRect (0, segments[i].y - sizeOnScreen, canvas.width, sizeOnScreen);
-             //   alert(""+0+","+ (segments[i].y - sizeOnScreen)+","+canvas.width+","+sizeOnScreen);
-            }
-        }
-        ctx.drawImage(img,0, 0, canvas.width, this.horizon, 0, 0, canvas.width, this.horizon);
-        divzs = document.getElementById('zs');
-        if(printz){
-            printz = false;
-            divzs.innerHTML = "totaldist = " + totalDist + "<br>";
-            for(var i in segments){
-                divzs.innerHTML += "segz = "+segments[i].z + " segy = "+ (segments[i].y) +"<br>";
-                divzs.innerHTML += "yWorld/segment.z = " + (yWorld/segments[i].z) + "<br>";
-                divzs.innerHTML += "segsize = " + segsize + " height on screen ="+segsize/zs[parseInt(240 - segments[i].y)] + "<br>";
-            }
-            for(var i in zs){
-                divzs.innerHTML += zs[i]+"<br>";
-            }
-        }
     }
      
-    this.update = function(){
+    this.update = function(pos){
+        dPos = lastPos - pos;
+        lasPos = pos;
         
     }
 }

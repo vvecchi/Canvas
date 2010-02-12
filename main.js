@@ -3,7 +3,7 @@ var NUMSEGS = 5;
 var SEGSIZE = (240/2)/NUMSEGS;
 var SECONDS_BETWEEN_FRAMES = 1/15;
 var pos = 0;
-var velocity = 50;
+var velocity = 1;
 lastFrame = new Date().getTime();
 var track = new Track();
 
@@ -16,9 +16,7 @@ function draw(){
     var dt = (thisFrame - this.lastFrame)/1000;
     this.lastFrame = thisFrame;
     pos = pos + velocity * dt;
-    //pos = pos + 0.5;
-    //pos = pos%SEGSIZE;
-    track.pos = pos;
+    track.update(pos);
  }
  
  function init(){
