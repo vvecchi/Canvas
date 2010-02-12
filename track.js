@@ -4,6 +4,11 @@ function Segment(){
     this.shaded = 0;
     this.sizeOnScreen = 0;
 }
+
+function TrackObject(){
+    this.z = 0;
+}
+
 function Track(){
     
     this.pos = 0;
@@ -30,6 +35,8 @@ function Track(){
     }
     var firstIndex = 0;
     
+    var trackObject = new TrackObject();
+    trackObject.z = totalDist/16;
     this.draw = function(){
         var canvas = document.getElementById('tutorial');
         var ctx = canvas.getContext('2d');
@@ -55,11 +62,21 @@ function Track(){
         }
         
         ctx.drawImage(img,0, 0, canvas.width, this.horizon, 0, 0, canvas.width, this.horizon);
+        objy = canvas.height - ((yWorld/trackObject.z) + (this.horizon));
+        if(objy < this.horizon)
+        {
+            objy= this.horizon;
+        }
+        carimg = document.getElementById('car')
+        ctx.drawImage(carimg,0,0,484,350,160 - 200/trackObject.z ,objy - 242/trackObject.z, 175/trackObject.z, 200/trackObject.z);
     }
      
     this.update = function(pos){
         dPos = lastPos - pos;
         lasPos = pos;
-        
+        trackObject.z -= totalDist/10000;
+        if(trackObject.z < 1){
+            trackObject.z = totalDist;
+        }
     }
 }
