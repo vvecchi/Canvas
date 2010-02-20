@@ -12,19 +12,19 @@ function TrackObject(){
 function Track(){
     
     this.pos = 0;
-    this.horizon = 130;
+    this.horizon = 120;
     
     var lastPos = 0;
-    var numsegs = 10;
+    var numsegs = 120;
     var totalDist = 0;
-    var yWorld = - 500;
+    var yWorld = - 30;
     var printz = true;
     var zs = new Array()
     for(i = 0; i < 240; i++){
         zs[i] = yWorld/(i - (240/2));
     }
     totalDist = - yWorld;
-    var segsize = totalDist/(numsegs*12);
+    var segsize = totalDist/(numsegs);
     var segments = new Array();
     for(i = 0;i < numsegs; i++){
         segment = new Segment();
@@ -43,40 +43,39 @@ function Track(){
         var img = document.getElementById('track');
         var imgdark = document.getElementById('trackdark');
         var y = 1;//(yWorld/segments[0].z) + (this.horizon);
-        
+        ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
         for(i = 0; i < numsegs -1 ;i++){
             var ynew = (yWorld/segments[i+1].z) + (this.horizon);
             var sizeOnScreen = ynew - y;
             segments[i].sizeOnScreen = sizeOnScreen;
-            segments[i].y = y;
-            
+           // segments[i].y = y;
             var drawImg = img
             if(segments[i].shaded == 1){
                 drawImg = imgdark;
             }
             for(j = 0; j <= segments[i].sizeOnScreen;  j++){
                 ypos = canvas.height - j - y;
-                ctx.drawImage(drawImg, 0, ypos, canvas.width,1, 0, ypos, canvas.width,1);
+                ctx.drawImage(drawImg, 0, 200, drawImg.width,1, 160 - (canvas.width/2)/zs[ypos], ypos, canvas.width/zs[ypos],1);
             }
             y = ynew;
         }
         
-        ctx.drawImage(img,0, 0, canvas.width, this.horizon, 0, 0, canvas.width, this.horizon);
+        
         objy = canvas.height - ((yWorld/trackObject.z) + (this.horizon));
         if(objy < this.horizon)
         {
             objy= this.horizon;
         }
         carimg = document.getElementById('car')
-        ctx.drawImage(carimg,0,0,484,350,160 - 200/trackObject.z ,objy - 242/trackObject.z, 175/trackObject.z, 200/trackObject.z);
+        ctx.drawImage(carimg,0,0,carimg.width,carimg.height,160 - (carimg.width/20)/trackObject.z , objy - (carimg.height/20)/trackObject.z, (carimg.width/10)/trackObject.z, (carimg.height/10)/trackObject.z);
     }
      
     this.update = function(pos){
         dPos = lastPos - pos;
         lasPos = pos;
         trackObject.z -= totalDist/10000;
-        if(trackObject.z < 1){
-            trackObject.z = totalDist;
+        if(trackObject.z <= 0.001){
+            trackObject.z = totalDist/2;
         }
     }
 }
