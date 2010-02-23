@@ -17,7 +17,7 @@ function Track(){
     var lastPos = 0;
     var numsegs = 120;
     var totalDist = 0;
-    var yWorld = - 30;
+    var yWorld = - 50;
     var printz = true;
     var zs = new Array()
     for(i = 0; i < 240; i++){
@@ -28,12 +28,14 @@ function Track(){
     var segments = new Array();
     for(i = 0;i < numsegs; i++){
         segment = new Segment();
-        if(i == 0)segment.z = 0.01;
+        if(i == 0)segment.z = 0.001;
         else segment.z = i*segsize;
         segment.shaded = i%2;
         segments[i] = segment;
     }
     var firstIndex = 0;
+	var lastIndex = numsegs - 1;
+	var firstSegSize = segsize - 0.001;
     
     var trackObject = new TrackObject();
     trackObject.z = totalDist/16;
@@ -44,17 +46,21 @@ function Track(){
         var imgdark = document.getElementById('trackdark');
         var y = 1;//(yWorld/segments[0].z) + (this.horizon);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
-        for(i = 0; i < numsegs -1 ;i++){
-            var ynew = (yWorld/segments[i+1].z) + (this.horizon);
+		
+        for(i = 0; i < numsegs; i++){
+			var curIndex = (i + firstIndex)%numsegs;
+            var ynew = (yWorld/segments[(curIndex+1)%numsegs].z) + (this.horizon);
             var sizeOnScreen = ynew - y;
-            segments[i].sizeOnScreen = sizeOnScreen;
-           // segments[i].y = y;
-            var drawImg = img
-            if(segments[i].shaded == 1){
+			if(sizeOnScreen < 1){
+				break;
+			}
+			var drawImg = img
+            if(segments[curIndex].shaded == 1){
                 drawImg = imgdark;
             }
-            for(j = 0; j <= segments[i].sizeOnScreen;  j++){
-                ypos = canvas.height - j - y;
+            for(j = 0; j < sizeOnScreen;  j++){
+                ypos = parseInt(canvas.height - j - y);
+                ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
                 ctx.drawImage(drawImg, 0, 200, drawImg.width,1, 160 - (canvas.width/2)/zs[ypos], ypos, canvas.width/zs[ypos],1);
             }
             y = ynew;
@@ -73,9 +79,22 @@ function Track(){
     this.update = function(pos){
         dPos = lastPos - pos;
         lasPos = pos;
-        trackObject.z -= totalDist/10000;
-        if(trackObject.z <= 0.001){
+		dPos = - totalDist/10000;
+     //   trackObject.z -= totalDist/10000;
+  /*      if(trackObject.z <= 0.001){
             trackObject.z = totalDist/2;
-        }
+        }*/
+		for(i = 0; i < numsegs-1; i ++){
+			segments[i].z += dPos;
+		}
+		while(segments[firstIndex].z < 0.001){
+			firstSegSize -= segments[firstIndex].z - 0.001;
+			segments[firstIndex].z = 0.001;
+			if(segments[firstIndex].z + firstSegSize < 0.001){
+				segments[firstIndex].z = segments[lastIndex] + segsize;
+				lastIndex = firstIndex;
+				firstIndex = (firstIndex + 1) % numsegs;	
+			}
+		}
     }
 }
