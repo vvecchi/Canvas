@@ -1,9 +1,9 @@
 var COUNT = 0;
 var NUMSEGS = 5;
 var SEGSIZE = (240/2)/NUMSEGS;
-var SECONDS_BETWEEN_FRAMES = 1/15;
+var SECONDS_BETWEEN_FRAMES = 1/60;
 var pos = 0;
-var velocity = 1;
+var velocity = 0.00001;
 lastFrame = new Date().getTime();
 var track = new Track();
 

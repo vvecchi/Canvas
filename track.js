@@ -47,19 +47,18 @@ function Track(){
         var y = 1;//(yWorld/segments[0].z) + (this.horizon);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
 		
-        for(i = 0; i < numsegs; i++){
-			var curIndex = (i + firstIndex)%numsegs;
+        for(i = 0; i < 30; i++){
+			var curIndex = (i + firstIndex);
             var ynew = (yWorld/segments[(curIndex+1)%numsegs].z) + (this.horizon);
             var sizeOnScreen = ynew - y;
-			if(sizeOnScreen < 1){
-				break;
-			}
 			var drawImg = img
             if(segments[curIndex].shaded == 1){
                 drawImg = imgdark;
             }
+			y = parseInt(y);
             for(j = 0; j < sizeOnScreen;  j++){
-                ypos = parseInt(canvas.height - j - y);
+                ypos = canvas.height - j - y;
+//				ypos = y + j;
                 ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
                 ctx.drawImage(drawImg, 0, 200, drawImg.width,1, 160 - (canvas.width/2)/zs[ypos], ypos, canvas.width/zs[ypos],1);
             }
@@ -80,21 +79,20 @@ function Track(){
         dPos = lastPos - pos;
         lasPos = pos;
 		dPos = - totalDist/10000;
-     //   trackObject.z -= totalDist/10000;
-  /*      if(trackObject.z <= 0.001){
+        trackObject.z += dPos;
+        if(trackObject.z <= 0.001){
             trackObject.z = totalDist/2;
-        }*/
-		for(i = 0; i < numsegs-1; i ++){
+        }
+		for(i = 0; i < numsegs; i ++){
 			segments[i].z += dPos;
 		}
-		while(segments[firstIndex].z < 0.001){
-			firstSegSize -= segments[firstIndex].z - 0.001;
-			segments[firstIndex].z = 0.001;
-			if(segments[firstIndex].z + firstSegSize < 0.001){
-				segments[firstIndex].z = segments[lastIndex] + segsize;
-				lastIndex = firstIndex;
-				firstIndex = (firstIndex + 1) % numsegs;	
-			}
+		firstSegSize -= segments[firstIndex].z - 0.001;
+		segments[firstIndex].z = 0.001;
+		if(segments[firstIndex].z + firstSegSize < 0.001){
+			segments[firstIndex].z = segments[lastIndex].z + segsize;
+			lastIndex = firstIndex;
+			firstIndex = (firstIndex + 1) % numsegs;
+			firstSegSize = segsize;
 		}
     }
 }
