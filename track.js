@@ -24,7 +24,7 @@ function Track(){
         zs[i] = yWorld/(i - (240/2));
     }
     totalDist = - yWorld;
-    var segsize = totalDist/(numsegs);
+    var segsize = totalDist/numsegs;
     var segments = new Array();
     for(i = 0;i < numsegs; i++){
         segment = new Segment();
@@ -34,37 +34,36 @@ function Track(){
         segments[i] = segment;
     }
     var firstIndex = 0;
-	var lastIndex = numsegs - 1;
-	var firstSegSize = segsize - 0.001;
+    var lastIndex = numsegs - 1;
+    var firstSegSize = segsize - 0.001;
     
     var trackObject = new TrackObject();
-    trackObject.z = totalDist/16;
+    trackObject.z = segments[1].z;
+    
     this.draw = function(){
         var canvas = document.getElementById('tutorial');
         var ctx = canvas.getContext('2d');
         var img = document.getElementById('track');
         var imgdark = document.getElementById('trackdark');
-        var y = 1;//(yWorld/segments[0].z) + (this.horizon);
+        var y = canvas.height - 1;
+        y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
-		
-        for(i = 0; i < 30; i++){
-			var curIndex = (i + firstIndex);
-            var ynew = (yWorld/segments[(curIndex+1)%numsegs].z) + (this.horizon);
-            var sizeOnScreen = ynew - y;
-			var drawImg = img
+        for(i = 0; i < numsegs -1 ; i++){
+            var curIndex = (i + firstIndex);
+            var nextIndex = (curIndex + 1)%numsegs;
+            var ynew = canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1);
+            ynew = parseInt(ynew);
+            var sizeOnScreen =  ynew - y;
+            var drawImg = img
             if(segments[curIndex].shaded == 1){
                 drawImg = imgdark;
             }
-			y = parseInt(y);
-            for(j = 0; j < sizeOnScreen;  j++){
-                ypos = canvas.height - j - y;
-//				ypos = y + j;
+            for(ypos = y; ypos > y + sizeOnScreen;  ypos--){
                 ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
                 ctx.drawImage(drawImg, 0, 200, drawImg.width,1, 160 - (canvas.width/2)/zs[ypos], ypos, canvas.width/zs[ypos],1);
             }
             y = ynew;
         }
-        
         
         objy = canvas.height - ((yWorld/trackObject.z) + (this.horizon));
         if(objy < this.horizon)
@@ -78,21 +77,24 @@ function Track(){
     this.update = function(pos){
         dPos = lastPos - pos;
         lasPos = pos;
-		dPos = - totalDist/10000;
+        dPos = - totalDist/10000;
         trackObject.z += dPos;
         if(trackObject.z <= 0.001){
-            trackObject.z = totalDist/2;
+//            trackObject.z = totalDist/2;
         }
-		for(i = 0; i < numsegs; i ++){
-			segments[i].z += dPos;
-		}
-		firstSegSize -= segments[firstIndex].z - 0.001;
-		segments[firstIndex].z = 0.001;
-		if(segments[firstIndex].z + firstSegSize < 0.001){
-			segments[firstIndex].z = segments[lastIndex].z + segsize;
-			lastIndex = firstIndex;
-			firstIndex = (firstIndex + 1) % numsegs;
-			firstSegSize = segsize;
-		}
+        for(i = 0; i < numsegs; i ++){
+//      segments[i].z += dPos;
+        }
+        firstSegSize -= segments[firstIndex].z - 0.001;
+        segments[firstIndex].z = 0.001;
+        if(segments[firstIndex].z + firstSegSize < 0.001){
+            segments[firstIndex].z = segments[lastIndex].z + segsize;
+            if(segments[firstIndex].z > totalDist){
+                alert("ró");
+            }
+            lastIndex = firstIndex;
+            firstIndex = (firstIndex + 1) % numsegs;
+            firstSegSize = segsize;
+        }
     }
 }
