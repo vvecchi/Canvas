@@ -38,7 +38,7 @@ function Track(){
     var firstSegSize = segsize - 0.001;
     
     var trackObject = new TrackObject();
-    trackObject.z = segments[1].z;
+    trackObject.z = segments[1].z + segsize/2;
     
     this.draw = function(){
         var canvas = document.getElementById('tutorial');
@@ -49,7 +49,7 @@ function Track(){
         y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
         for(i = 0; i < numsegs -1 ; i++){
-            var curIndex = (i + firstIndex);
+            var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
             var ynew = canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1);
             ynew = parseInt(ynew);
@@ -78,12 +78,12 @@ function Track(){
         dPos = lastPos - pos;
         lasPos = pos;
         dPos = - totalDist/10000;
-        trackObject.z += dPos;
+    //    trackObject.z += dPos;
         if(trackObject.z <= 0.001){
 //            trackObject.z = totalDist/2;
         }
         for(i = 0; i < numsegs; i ++){
-//      segments[i].z += dPos;
+            segments[i].z += dPos;
         }
         firstSegSize -= segments[firstIndex].z - 0.001;
         segments[firstIndex].z = 0.001;
