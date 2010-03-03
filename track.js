@@ -5,7 +5,7 @@ function Segment(){
     this.sizeOnScreen = 0;
 }
 
-function TrackObject(){
+function MyCar(){
     this.z = 0;
 }
 
@@ -37,9 +37,9 @@ function Track(){
     var lastIndex = numsegs - 1;
     var firstSegSize = segsize - segments[firstIndex];
     
-    var trackObject = new TrackObject();
-    trackObject.z = segments[1].z + segsize/4;
-    
+    var myCar = new MyCar();
+    myCar.z = segments[1].z + segsize/4;
+    myCar.z = 0.75;
     this.draw = function(){
         var canvas = document.getElementById('tutorial');
         var ctx = canvas.getContext('2d');
@@ -48,7 +48,7 @@ function Track(){
         var y = canvas.height - 1;
         y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
-        for(i = 1; i < 30 ; i++){
+        for(i = 1; i < 20 ; i++){
             var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
             var ynew = canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1);
@@ -66,7 +66,7 @@ function Track(){
             y = ynew;
         }
         
-        objy = canvas.height - ((yWorld/trackObject.z) + (this.horizon));
+        objy = canvas.height - ((yWorld/myCar.z) + (this.horizon));
         if(objy < this.horizon)
         {
             objy= this.horizon;
@@ -76,30 +76,26 @@ function Track(){
 		carwidth = 96;
 		carheight = 56;
 		carx = 160;
-        ctx.drawImage(carimg,0,0,carwidth,carheight,carx - (carwidth/2)/trackObject.z , objy - (carimg.height/20)/trackObject.z, (carwidth)/trackObject.z, (carheight)/trackObject.z);
+        ctx.drawImage(carimg,0,0,carwidth,carheight,carx - (carwidth/2)/myCar.z , objy - (carimg.height/20)/myCar.z, (carwidth)/myCar.z, (carheight)/myCar.z);
     }
      
     this.update = function(pos){
         dPos = lastPos - pos;
         lasPos = pos;
-        dPos = - totalDist/10000;
-    //    trackObject.z += dPos;
-        if(trackObject.z <= 0.001){
-//            trackObject.z = totalDist/2;
-        }
+        dPos = - totalDist/6000;
         for(i = 0; i < numsegs; i ++){
             segments[i].z += dPos;
         }
         firstSegSize += dPos;
         segments[firstIndex].z = zs[239];
-        if(segments[firstIndex + 1].z < 0){
+        while(segments[(firstIndex + 1)%numsegs].z < 0){
 			segments[firstIndex].z = segments[lastIndex].z + segsize;
             lastIndex = firstIndex;
             firstIndex = (firstIndex + 1) % numsegs;
             firstSegSize = segsize;
-			if(segments[firstIndex].z + firstSegSize < zs[239]){
-			
-			}
+		/*	if(canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1) < this.horizon){
+				alert("lastIndex = " + lastIndex + "firstIndex = " + firstIndex + )
+			}*/
         }
     }
 }
