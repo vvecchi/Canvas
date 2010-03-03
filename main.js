@@ -19,7 +19,7 @@ var breakKeyUp = 90;
 
 
 function draw(){
-   track.draw();
+    track.draw();
  }
  
  function update(){
@@ -31,13 +31,13 @@ function draw(){
 			velocity += acceleration*dt;
 		}
 	}
-	else if(isBreaking){
+	if(isBreaking){
 		velocity -=  deceleration*dt
 		if(velocity < 0){
 			velocity = 0;
 		}
 	}
-	else{
+	if(!isAccelerating && !isBreaking){
 		velocity -=  acceleration/2*dt
 		if(velocity < 0){
 			velocity = 0;
@@ -45,6 +45,7 @@ function draw(){
 	}
 	
     pos = pos + velocity * dt *speedScale;
+	track.myCar.isBreaking = isBreaking;
     track.update(pos);
  }
  
@@ -56,11 +57,9 @@ function draw(){
 document.onkeypress =function(e) {
 	if(e.which == accelerateKeyDown){
 		isAccelerating = true;
-		isBreaking = false;
 	}
 	else if(e.which = breakKeyDown){
 		isBreaking = true;
-		isAccelerating = false;
 	}
 }
 

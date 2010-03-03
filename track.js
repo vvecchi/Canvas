@@ -7,6 +7,12 @@ function Segment(){
 
 function MyCar(){
     this.z = 0;
+	this.x = 160;
+	this.width = 94;
+	this.height = 56;
+	this.offsetX = 0;
+	this.offsetY = 0;
+	this.isBreaking
 }
 
 function Track(){
@@ -37,9 +43,9 @@ function Track(){
     var lastIndex = numsegs - 1;
     var firstSegSize = segsize - segments[firstIndex];
     
-    var myCar = new MyCar();
-    myCar.z = segments[1].z + segsize/4;
-    myCar.z = 0.75;
+    this.myCar = new MyCar();
+    this.myCar.z = segments[1].z + segsize/4;
+    this.myCar.z = 0.75;
     this.draw = function(){
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
@@ -66,17 +72,19 @@ function Track(){
             y = ynew;
         }
         
-        objy = canvas.height - ((yWorld/myCar.z) + (this.horizon));
+        objy = canvas.height - ((yWorld/this.myCar.z) + (this.horizon));
         if(objy < this.horizon)
         {
             objy= this.horizon;
         }
         carimg = document.getElementById('car')
-		//0,0,96,56
-		carwidth = 96;
-		carheight = 56;
-		carx = 160;
-        ctx.drawImage(carimg,0,0,carwidth,carheight,carx - (carwidth/2)/myCar.z , objy - (carimg.height/20)/myCar.z, (carwidth)/myCar.z, (carheight)/myCar.z);
+		
+        ctx.drawImage(carimg, this.myCar.offsetX,this.myCar.offsetY,this.myCar.width,this.myCar.height,this.myCar.x - (this.myCar.width/2)/this.myCar.z , objy - (carimg.height/20)/this.myCar.z, (this.myCar.width)/this.myCar.z, (this.myCar.height)/this.myCar.z);
+		if(this.myCar.isBreaking){
+			ctx.fillStyle = "rgba(256,0,0,0.6)";
+			ctx.fillRect (this.myCar.x - (this.myCar.width/2)/this.myCar.z + 20, objy - 15, 20, 7);
+			ctx.fillRect (this.myCar.x + (this.myCar.width/2)/this.myCar.z - 34, objy - 15, 20 , 7);
+		}
     }
      
     this.update = function(pos){
