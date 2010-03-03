@@ -41,7 +41,7 @@ function Track(){
     myCar.z = segments[1].z + segsize/4;
     myCar.z = 0.75;
     this.draw = function(){
-        var canvas = document.getElementById('tutorial');
+        var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
         var img = document.getElementById('track');
         var imgdark = document.getElementById('trackdark');
@@ -81,8 +81,7 @@ function Track(){
      
     this.update = function(pos){
         dPos = lastPos - pos;
-        lasPos = pos;
-        dPos = - totalDist/6000;
+        lastPos = pos;
         for(i = 0; i < numsegs; i ++){
             segments[i].z += dPos;
         }
