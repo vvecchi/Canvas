@@ -58,10 +58,10 @@ function Track(yWorld,horizon, width, height){
         if(i == 0)segment.z = zs[this.height - 1];
         else segment.z = i*segsize;
         segment.shaded = i%2;
-        if(i > 6 && i < 20){
+        if(i > 10 && i < 20){
             segment.curve = 0.01
         }
-        if(i > 40 && i < 60){
+        if(i > 23 && i < 80){
             segment.curve = -0.01
         }
         segments[i] = segment;
@@ -78,8 +78,7 @@ function Track(yWorld,horizon, width, height){
         var y = canvas.height - 1;
         y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
-        dx = 0;
-        ddx = 0.02;
+        ddx = 0;
         trackX = canvas.width/2
         for(i = 0; i < 20 ; i++){
             var curIndex = (i + firstIndex) % numsegs;
@@ -91,10 +90,10 @@ function Track(yWorld,horizon, width, height){
             if(segments[curIndex].shaded == 1){
                 drawImg = imgdark;
             }
-            
             for(ypos = y; ypos > y + sizeOnScreen;  ypos--){
-                trackX +=  dx;
-                dx = dx + segments[curIndex].curve;
+                trackX +=  ddx;
+                if(zs[ypos] > 0.75)// car.z
+                    ddx += segments[curIndex].curve;
                 ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
                 ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - (canvas.width/zs[ypos])/2, ypos, canvas.width/zs[ypos],1);
             }
