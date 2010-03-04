@@ -58,12 +58,15 @@ function Track(yWorld,horizon, width, height){
         if(i == 0)segment.z = zs[this.height - 1];
         else segment.z = i*segsize;
         segment.shaded = i%2;
-        if(i > 10 && i < 20){
+        if(i > 4 && i < 30){
             segment.curve = 0.01
         }
-        if(i > 23 && i < 80){
+        if(i > 35 && i < 80){
             segment.curve = -0.01
         }
+        if(i > 95){
+            segment.curve = 0.005;
+        }   
         segments[i] = segment;
     }
     
