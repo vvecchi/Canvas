@@ -1,13 +1,15 @@
 function Segment(){
     this.y = 0;
     this.z = 0;
+    this.x = 0;
+    this.curve = 0;
     this.shaded = 0;
     this.sizeOnScreen = 0;
 }
 
 function MyCar(yWorld,horizon){
-    this.z = 0.5;
-    this.x = 10;
+    this.z = 0.75;
+    this.x = 0;
     this.width = 94;
     this.height = 56;
     this.offsetX = 0;
@@ -20,7 +22,7 @@ function MyCar(yWorld,horizon){
     this.draw = function(canvas, ctx){
         carimg = document.getElementById('car')
         objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - ((this.height/2) + 20)/this.z;
-        objx = canvas.width/2 - this.x/2/this.z
+        objx = canvas.width/2 + this.x/2/this.z
         ctx.drawImage(carimg, this.offsetX,this.offsetY,this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
         if(this.isBreaking){
         /*    ctx.fillStyle = "rgba(256,0,0,0.6)";
@@ -42,7 +44,7 @@ function Track(yWorld,horizon, width, height){
     var printz = true;
     var zs = new Array()
     for(i = 0; i < this.height; i++){
-        zs[i] = yWorld/(i - (this.height/2));
+        zs[i] = yWorld/( i - this.horizon);
         if(zs[i] < 0)
         {
             zs[i] = -zs[i];
@@ -53,9 +55,15 @@ function Track(yWorld,horizon, width, height){
     
     for(i = 0;i < numsegs; i++){
         segment = new Segment();
-        if(i == 0)segment.z = zs[239];
+        if(i == 0)segment.z = zs[this.height - 1];
         else segment.z = i*segsize;
         segment.shaded = i%2;
+        if(i > 6 && i < 20){
+            segment.curve = 0.01
+        }
+        if(i > 40 && i < 60){
+            segment.curve = -0.01
+        }
         segments[i] = segment;
     }
     
@@ -70,6 +78,9 @@ function Track(yWorld,horizon, width, height){
         var y = canvas.height - 1;
         y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
+        dx = 0;
+        ddx = 0.02;
+        trackX = canvas.width/2
         for(i = 0; i < 20 ; i++){
             var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
@@ -80,10 +91,12 @@ function Track(yWorld,horizon, width, height){
             if(segments[curIndex].shaded == 1){
                 drawImg = imgdark;
             }
+            
             for(ypos = y; ypos > y + sizeOnScreen;  ypos--){
-                track.x = canvas.width/2;
+                trackX +=  dx;
+                dx = dx + segments[curIndex].curve;
                 ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
-                ctx.drawImage(drawImg, 0, 220, drawImg.width,1, canvas.width/2 - (canvas.width/zs[ypos])/2, ypos, canvas.width/zs[ypos],1);
+                ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - (canvas.width/zs[ypos])/2, ypos, canvas.width/zs[ypos],1);
             }
             y = ynew;
         }

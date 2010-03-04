@@ -1,7 +1,7 @@
 var COUNT = 0;
 var NUMSEGS = 5;
 var SEGSIZE = (240/2)/NUMSEGS;
-var SECONDS_BETWEEN_FRAMES = 1000/60;
+var SECONDS_BETWEEN_FRAMES = 1000/120;
 var pos = 0;
 var velocity = 0;
 var maxVelocity = 200;
@@ -10,12 +10,11 @@ var isAccelerating = false;
 var isBreaking = false;
 var acceleration = 50;
 var deceleration = 100;
-var accelerateKeyDown = 97;
-var breakKeyDown = 122;
-var accelerateKeyUp = 65;
-var breakKeyUp = 90;
-var screenWidth = 640;
-var screenHeight = 480;
+
+var accelerateKey = 65;
+var breakKey = 90;
+var screenWidth = 320;
+var screenHeight = 240;
 
 lastFrame = new Date().getTime();
 horizon = screenHeight/2;
@@ -66,20 +65,20 @@ function draw(){
  }
 
 document.onkeydown =function(e) {
-    if(e.which == accelerateKeyUp){
+    if(e.which == accelerateKey){
         isAccelerating = true;
     }
-    else if(e.which = breakKeyUp){
+    else if(e.which = breakKey){
         isBreaking = true;
     }
 }
 
 document.onkeyup = function(e) {
-    if(e.which == accelerateKeyUp){
+    if(e.which == accelerateKey){
         
         isAccelerating = false;
     }
-    if(e.which = breakKeyUp){
+    if(e.which = breakKey){
         isBreaking = false;
     }
 }
