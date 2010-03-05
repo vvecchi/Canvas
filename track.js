@@ -7,17 +7,31 @@ function Segment(){
     this.sizeOnScreen = 0;
 }
 
+var frameOffsetX = new Array();
+var frameOffsetY = new Array();
+
+var straight = 0;
+var left = 1;
+var right = 2;
+
+frameOffsetX[straight] = 94;
+frameOffsetY[straight] = 7;
+
+frameOffsetX[left] = 6;
+frameOffsetY[left] = 7;
+
+frameOffsetX[right] = 357;
+frameOffsetY[right] = 7;
+
 function MyCar(yWorld,horizon){
     this.z = 0.75;
     this.x = 0;
-    this.width = 94;
-    this.height = 56;
-    this.offsetX = 0;
-    this.offsetY = 0;
+    this.width = 86;
+    this.height = 50;
+  
     this.isBreaking = false;
-    this.isTurningLeft = false;
-    this.isTurningRight = false;
-    
+    this.turnState = straight;
+        
     this.yWorld = yWorld;
     this.horizon = horizon;
     
@@ -26,7 +40,7 @@ function MyCar(yWorld,horizon){
         carimg = document.getElementById('car')
         objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - ((this.height/2) + 20)/this.z;
         objx = canvas.width/2// + (this.x/2)/this.z
-        ctx.drawImage(carimg, this.offsetX,this.offsetY,this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
+        ctx.drawImage(carimg, frameOffsetX[this.turnState],frameOffsetY[this.turnState],this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
         if(this.isBreaking){
         /*    ctx.fillStyle = "rgba(256,0,0,0.6)";
             ctx.fillRect (this.x - (this.width/2)/this.z + 20, objy + (2.75*this.height/4)/this.z, 20, 7);

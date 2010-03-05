@@ -1,4 +1,4 @@
-var SECONDS_BETWEEN_FRAMES = 16;
+var MSECONDS_BETWEEN_FRAMES = 1000/30;
 var pos = 0;
 var speed = 0;
 var maxspeed = 200;
@@ -84,12 +84,22 @@ document.onkeyup = function(e) {
         }
     }
     if(speed > 0){
+        turnSpeedScale = 1;
+        if(speed < 50){
+            turnSpeedScale = turnSpeedScale*speed/50;
+        }
         if(isTurningLeft){
-            myCar.x -= turnAmount* dt;
+            myCar.x -= turnAmount* dt * turnSpeedScale;
+            myCar.turnState = left;
         }
         if(isTurninhRight){
-            myCar.x += turnAmount*dt;
+            myCar.x += turnAmount*dt * turnSpeedScale;
+            myCar.turnState = right;
         }
+    }
+    if(!isTurningLeft && !isTurninhRight)
+    {
+        myCar.turnState = straight;
     }
     pos = pos + speed * dt *speedScale;
     track.update(pos);
@@ -102,7 +112,7 @@ document.onkeyup = function(e) {
     canvas = document.getElementById('canvas');
     canvas.width = screenWidth;
     canvas.height = screenHeight;
-    setInterval(function(){update();}, SECONDS_BETWEEN_FRAMES)
-    setInterval(function(){draw();}, SECONDS_BETWEEN_FRAMES)
+    setInterval(function(){update();}, MSECONDS_BETWEEN_FRAMES/2)
+    setInterval(function(){draw();}, MSECONDS_BETWEEN_FRAMES)
  }
 
