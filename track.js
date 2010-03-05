@@ -15,6 +15,9 @@ function MyCar(yWorld,horizon){
     this.offsetX = 0;
     this.offsetY = 0;
     this.isBreaking = false;
+    this.isTurningLeft = false;
+    this.isTurningRight = false;
+    
     this.yWorld = yWorld;
     this.horizon = horizon;
     
@@ -22,7 +25,7 @@ function MyCar(yWorld,horizon){
     this.draw = function(canvas, ctx){
         carimg = document.getElementById('car')
         objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - ((this.height/2) + 20)/this.z;
-        objx = canvas.width/2 + this.x/2/this.z
+        objx = canvas.width/2// + (this.x/2)/this.z
         ctx.drawImage(carimg, this.offsetX,this.offsetY,this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
         if(this.isBreaking){
         /*    ctx.fillStyle = "rgba(256,0,0,0.6)";
@@ -66,23 +69,23 @@ function Track(yWorld,horizon, width, height){
         }
         if(i > 95){
             segment.curve = 0.005;
-        }   
+        }
         segments[i] = segment;
     }
-    
+    this.carSegment = segments[0];
     var firstIndex = 0;
     var lastIndex = numsegs - 1;
     var firstSegSize = segsize - segments[firstIndex];
     
     
-    this.draw = function(canvas,ctx){
+    this.draw = function(canvas,ctx, carX){
         var img = document.getElementById('track');
         var imgdark = document.getElementById('trackdark');
         var y = canvas.height - 1;
         y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
         ddx = 0;
-        trackX = canvas.width/2
+        trackX = canvas.width/2 ;
         for(i = 0; i < 20 ; i++){
             var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
@@ -95,10 +98,11 @@ function Track(yWorld,horizon, width, height){
             }
             for(ypos = y; ypos > y + sizeOnScreen;  ypos--){
                 trackX +=  ddx;
-                if(zs[ypos] > 0.75)// car.z
+                if(zs[ypos] > 0.75){// car.z
                     ddx += segments[curIndex].curve;
+                }
                 ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
-                ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - (canvas.width/zs[ypos])/2, ypos, canvas.width/zs[ypos],1);
+                ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);
             }
             y = ynew;
         }
@@ -117,9 +121,13 @@ function Track(yWorld,horizon, width, height){
             lastIndex = firstIndex;
             firstIndex = (firstIndex + 1) % numsegs;
             firstSegSize = segsize;
-        /*	if(canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1) < this.horizon){
-                alert("lastIndex = " + lastIndex + "firstIndex = " + firstIndex + )
-            }*/
+        }
+        
+        for(i = firstIndex; i < firstIndex + 20; i = (i+1)%numsegs){
+            if(segments[i].z > 0.75){
+                break;
+            }
+            this.carSegment = segments[i];
         }
     }
 }
