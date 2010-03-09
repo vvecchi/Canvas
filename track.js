@@ -117,7 +117,7 @@ function Track(yWorld,horizon, width, height){
                 if(zs[ypos] > 0.75){// car.z
                     ddx += segments[curIndex].curve;
                 }
-                ctx.drawImage(drawImg,0,200,1,1,0,ypos,canvas.width,1);
+                ctx.drawImage(drawImg,1,200,1,1,0,ypos,canvas.width,1);
                 ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);
             }
             y = ynew;
