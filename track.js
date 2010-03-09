@@ -99,11 +99,14 @@ function Track(yWorld,horizon, width, height){
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
         ddx = 0;
         trackX = canvas.width/2 ;
-        for(i = 1; i < 20 ; i++){
+        for(i = 0; i < 20 ; i++){
             var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
             var ynew = canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1);
             ynew = parseInt(ynew);
+			if(ynew > y){
+				ynew = y;
+			}
             var sizeOnScreen =  ynew - y;
             var drawImg = img;
             if(segments[curIndex].shaded == 1){
