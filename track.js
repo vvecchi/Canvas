@@ -4,7 +4,6 @@ function Segment(){
     this.x = 0;
     this.curve = 0;
     this.shaded = 0;
-    this.sizeOnScreen = 0;
 }
 
 var frameOffsetX = new Array();
@@ -100,7 +99,7 @@ function Track(yWorld,horizon, width, height){
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
         ddx = 0;
         trackX = canvas.width/2 ;
-        for(i = 0; i < 20 ; i++){
+        for(i = 1; i < 20 ; i++){
             var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
             var ynew = canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1);

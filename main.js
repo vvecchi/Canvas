@@ -1,8 +1,8 @@
-var MSECONDS_BETWEEN_FRAMES = 1000/30;
+var MSECONDS_BETWEEN_FRAMES = 1000/60;
 var pos = 0;
 var speed = 0;
 var maxspeed = 200;
-var speedScale = 0.06
+var speedScale = 0.05
 var isAccelerating = false;
 var isBreaking = false;
 var isTurningLeft = false;
@@ -112,7 +112,7 @@ document.onkeyup = function(e) {
     canvas = document.getElementById('canvas');
     canvas.width = screenWidth;
     canvas.height = screenHeight;
-    setInterval(function(){update();}, MSECONDS_BETWEEN_FRAMES/2)
+    setInterval(function(){update();}, MSECONDS_BETWEEN_FRAMES)
     setInterval(function(){draw();}, MSECONDS_BETWEEN_FRAMES)
  }
 
