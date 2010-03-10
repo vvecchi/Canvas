@@ -17,18 +17,27 @@ var leftKey = 188;
 var rightKey = 190;
 var screenWidth = 320;
 var screenHeight = 240;
+var trackWidth = 290;
 
 lastFrame = new Date().getTime();
 horizon = screenHeight/2;
 yWorld = - 80;
-var track = new Track(yWorld,horizon,screenWidth,screenHeight);
+var trackObjects = new Array();
+var track = new Track(yWorld,horizon,screenWidth,screenHeight,trackObjects,trackWidth);
 var myCar = new MyCar(yWorld,horizon,screenWidth,screenHeight);
-
-
+var trackXs = new Array();
 function draw(){
     var ctx = canvas.getContext('2d');
-    track.draw(canvas,ctx,myCar.x);
+    
+    track.draw(canvas,ctx,myCar.x,trackXs);
+    trackObjects = trackObjects.sort(function(a,b){return a.z - b.z});
     myCar.draw(canvas,ctx);
+    var img = document.getElementById('trackobjects');
+    for(i = 0; i < trackObjects.length; i ++){
+        trackObject = trackObjects[i];
+        drawTrackObject(trackObject,canvas,ctx,img,yWorld,horizon,myCar.x,trackXs,trackWidth);
+    }
+    
  }
 
 document.onkeydown =function(e) {
@@ -101,11 +110,25 @@ document.onkeyup = function(e) {
     {
         myCar.turnState = straight;
     }
-    pos = pos + speed * dt *speedScale;
+    dpos = speed * dt *speedScale;
+    pos = pos + dpos;
     track.update(pos);
     myCar.x -= track.carSegment.curve*speed *100*dt;
     myCar.isBreaking = isBreaking;
-    
+    for(i = 0; i < trackObjects.length; i++){
+        trackObject = trackObjects[i];
+        trackObject.z = trackObject.z - dpos + trackObject.speed * dt *speedScale;
+        if(trackObject.z <= myCar.z + dpos && trackObject.z > myCar.z - dpos){
+            if(myCar.x > trackObject.x - trackObject.width/2 &&
+                myCar.x < trackObject.x + trackObject.width/2){
+                speed = 0;
+                myCar.x = 0;
+            }            
+        }
+        if(trackObject.z < 0.1){
+            
+        }
+    }
  }
  
  function init(){
