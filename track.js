@@ -15,10 +15,10 @@ function TrackObject() {
     this.spriteOffsetY = 0;
     this.spriteWidth = 60;
     this.spriteHeight = 175;
-    this.width = 32;
+    this.width = 60;
 }
 function drawTrackObject(trackObject,canvas,ctx,img,yWorld,horizon,carX,trackXs,trackWidth){
-    if(trackObject.z < 0.1 || trackObject.z > - yWorld/4)return;
+    if(trackObject.z < 0.4 || trackObject.z > - yWorld/4)return;
     objy = canvas.height - ((yWorld/trackObject.z) + (horizon))  - trackObject.spriteHeight/trackObject.z;
     objBaseY = parseInt(objy + trackObject.spriteHeight/trackObject.z);
     objx = trackXs[objBaseY] - (((canvas.width - trackWidth)/2 - trackObject.x + carX + (trackObject.spriteWidth/2))/trackObject.z)
@@ -81,6 +81,8 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
     this.trackObjectsArray = trackObjectsArray;
     var lastPos = 0;
     var numsegs = 120;
+	this.trackDataIndex = 0;
+	this.trackData = "|";
     var totalDist = -yWorld;
     var printz = true;
     var zs = new Array()
@@ -93,23 +95,24 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
     }
     var segsize = totalDist/numsegs;
     var segments = new Array();
-    
+    numsegs = numsegs/4;
     for(i = 0;i < numsegs; i++){
         segment = new Segment();
         if(i == 0)segment.z = zs[this.height - 1];
         else segment.z = i*segsize;
         segment.shaded = i%2;
+		if(segment.shaded){
         var trackObject = new TrackObject();
-        trackObject.x = trackWidth/2 + 10;
-        trackObject.z = segment.z;
-        trackObjectsArray.push(trackObject);
-        
-        trackObject = new TrackObject();
-        trackObject.x = -trackWidth/2 - 10;
-        trackObject.z = segment.z;
-        trackObject.spriteOffsetX = 60;
-        trackObjectsArray.push(trackObject);
-       
+			trackObject.x = trackWidth/2 + 10;
+			trackObject.z = segment.z;
+			trackObjectsArray.push(trackObject);
+        }else{
+			trackObject = new TrackObject();
+			trackObject.x = -trackWidth/2 - 10;
+			trackObject.z = segment.z;
+			trackObject.spriteOffsetX = 60;
+			trackObjectsArray.push(trackObject);
+       }
         if(i > 4 && i < 30){
             segment.curve = 0.01
             
@@ -136,7 +139,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
         ddx = 0;
         trackX = canvas.width/2 ;
-        for(i = 0; i < 20 ; i++){
+        for(i = 0; i < numsegs -1; i++){
             var curIndex = (i + firstIndex) % numsegs;
             var nextIndex = (curIndex + 1)%numsegs;
             var ynew = canvas.height - ((yWorld/segments[nextIndex].z) + this.horizon + 1);
@@ -161,7 +164,36 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             y = ynew;
         }
     }
-     
+	this.getCurveAmount = function(index){
+		var curveAmount = 0;
+		switch(trackData.charAt(index%trackData.length)){
+			case '(':
+				curveAmount = 0.01;
+				break;
+			case ')':
+				curveAmount = -0.01;
+				break;
+			case '<':
+				curveAmount = 0.02;
+				break;
+			case '>':
+				curveAmount = -0.02;
+				break;
+			case '|':
+			default:
+				break;
+		}
+		return curveAmount;
+	}
+	
+	this.initTrackData = function(trackData){
+		this.trackData = trackData;
+		for( i = 0; i < numsegs; i ++){
+			segments[i].curve = this.getCurveAmount(i);
+		}
+		this.trackDataIndex = i;
+	}
+	
     this.update = function(pos){
         dPos = lastPos - pos;
         lastPos = pos;
@@ -175,37 +207,43 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             lastIndex = firstIndex;
             firstIndex = (firstIndex + 1) % numsegs;
             firstSegSize = segsize;
-            
-            for(i = 0; i < this.trackObjectsArray.length; i ++){
-                if(this.trackObjectsArray[i].z < 0.1){
-                    this.trackObjectsArray[i].z = segments[lastIndex].z;
-                    this.trackObjectsArray[i].x = this.trackWidth/2 + 10;
-                    this.trackObjectsArray[i].spriteOffsetX = 0;
-                    break;
-                }
-            }
-            if(i = this.trackObjectsArray.length){
-              var trackObject = new TrackObject();
-                trackObject.x = this.trackWidth/2 + 10;
-                trackObject.z = segments[lastIndex].z;
-                trackObject.spriteOffsetX = 0;
-                this.trackObjectsArray.push(trackObject);
-            }
-            for(i = 0; i < this.trackObjectsArray.length; i ++){
-                if(this.trackObjectsArray[i].z < 0.1){
-                    this.trackObjectsArray[i].z = segments[lastIndex].z;
-                    this.trackObjectsArray[i].x = - this.trackWidth/2 - 10;
-                    this.trackObjectsArray[i].spriteOffsetX = 60;
-                    break;
-                }
-            }
-            if(i = this.trackObjectsArray.length){
-              var trackObject = new TrackObject();
-                trackObject.x = - this.trackWidth/2 - 10;
-                trackObject.z = segments[lastIndex].z;
-                trackObject.spriteOffsetX = 60;
-                this.trackObjectsArray.push(trackObject);
-            }
+			segments[lastIndex].curve = this.getCurveAmount(this.trackDataIndex);
+			this.trackDataIndex += 1;
+            if(segments[lastIndex].shaded){
+				for(i = 0; i < this.trackObjectsArray.length; i ++){
+					if(this.trackObjectsArray[i].z < 0.1){
+						this.trackObjectsArray[i].z = segments[lastIndex].z;
+						this.trackObjectsArray[i].x = this.trackWidth/2 + 10;
+						this.trackObjectsArray[i].spriteOffsetX = 0;
+						break;
+					}
+				}
+				if(i = this.trackObjectsArray.length){
+				  var trackObject = new TrackObject();
+					trackObject.x = this.trackWidth/2 + 10;
+					trackObject.z = segments[lastIndex].z;
+					trackObject.spriteOffsetX = 0;
+					this.trackObjectsArray.push(trackObject);
+				}
+			}
+			else
+			{
+				for(i = 0; i < this.trackObjectsArray.length; i ++){
+					if(this.trackObjectsArray[i].z < 0.1){
+						this.trackObjectsArray[i].z = segments[lastIndex].z;
+						this.trackObjectsArray[i].x = - this.trackWidth/2 - 10;
+						this.trackObjectsArray[i].spriteOffsetX = 60;
+						break;
+					}
+				}
+				if(i = this.trackObjectsArray.length){
+				  var trackObject = new TrackObject();
+					trackObject.x = - this.trackWidth/2 - 10;
+					trackObject.z = segments[lastIndex].z;
+					trackObject.spriteOffsetX = 60;
+					this.trackObjectsArray.push(trackObject);
+				}
+			}
         }
         
         for(i = firstIndex; i < firstIndex + 20; i = (i+1)%numsegs){

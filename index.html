@@ -7,6 +7,7 @@
 #track,#trackdark,#car,#trackobjects{
 display:none;
 }
+
 .body{
 margin:auto;
 }
@@ -19,5 +20,16 @@ margin:auto;
 <img src="ferrari.png" id="car">
 <img src="trackobjects.png" id="trackobjects">
 <div id="zs">Aperte A para acelerar e Z para brecar, aperte &#060;, e .&#062; para virar</div>
-
+<div><!--
+Editor de pista:<br>
+(: curva suave para a direita<br>
+&#060;: curva fechada a direita<br>
+): curva suave para a esquerda<br>
+&#062;: curva fechada para a esquerda<br>
+| e qualquer outro simbolo: pista reta<br>
+cada caractere corresponde a um trecho continuo da mesma cor.<br> !-->
+<div id="trackdata">|||||||||||||||||||||||)>>>>>>>>>>>>>>>>>>>>>>>>)|(((((|||||||||||||||||||||))))))))))))))))))||||||||||||||||||||||||||||||(((((((((((((((((((((((((()))))))))))))))))))))))))))))|||||||||||||||(((((((((((((||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(((((((((((((((((((((((((((((((((((((((((((((((>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<
+</div>
+<!-- input type="button" value="atualiza" onclick="updateTrackData()" !-->
+</div>
 </body>

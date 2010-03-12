@@ -26,6 +26,7 @@ var trackObjects = new Array();
 var track = new Track(yWorld,horizon,screenWidth,screenHeight,trackObjects,trackWidth);
 var myCar = new MyCar(yWorld,horizon,screenWidth,screenHeight);
 var trackXs = new Array();
+
 function draw(){
     var ctx = canvas.getContext('2d');
     
@@ -35,7 +36,13 @@ function draw(){
     var img = document.getElementById('trackobjects');
     for(i = 0; i < trackObjects.length; i ++){
         trackObject = trackObjects[i];
-        drawTrackObject(trackObject,canvas,ctx,img,yWorld,horizon,myCar.x,trackXs,trackWidth);
+		if(trackObject.z < 0.1)continue;
+		objy = canvas.height - ((yWorld/trackObject.z) + (horizon))  - trackObject.spriteHeight/trackObject.z;
+		objBaseY = parseInt(objy + trackObject.spriteHeight/trackObject.z);
+		objx = trackXs[objBaseY] - (((canvas.width - trackWidth)/2 - trackObject.x + myCar.x + (trackObject.spriteWidth/2))/trackObject.z)
+		ctx.drawImage(img, trackObject.spriteOffsetX ,trackObject.spriteOffsetY,
+		trackObject.spriteWidth, trackObject.spriteHeight, objx, objy ,
+		(trackObject.spriteWidth)/trackObject.z, (trackObject.spriteHeight)/trackObject.z);
     }
     
  }
@@ -130,12 +137,14 @@ document.onkeyup = function(e) {
         }
     }
  }
- 
+ var updateInterval;
+ var drawInterval;
  function init(){
-    canvas = document.getElementById('canvas');
+	canvas = document.getElementById('canvas');
+	trackData = document.getElementById('trackdata').innerText;
+	track.initTrackData(trackData);
     canvas.width = screenWidth;
     canvas.height = screenHeight;
-    setInterval(function(){update();}, MSECONDS_BETWEEN_FRAMES)
-    setInterval(function(){draw();}, MSECONDS_BETWEEN_FRAMES)
+    updateInterval = setInterval(function(){update();}, MSECONDS_BETWEEN_FRAMES)
+    drawInterval = setInterval(function(){draw();}, MSECONDS_BETWEEN_FRAMES)
  }
-
