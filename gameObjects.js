@@ -17,33 +17,55 @@ function TrackObject() {
     this.spriteHeight = 175;
     this.width = 60;
 }
-function drawTrackObject(trackObject,canvas,ctx,img,yWorld,horizon,carX,trackXs,trackWidth){
-    if(trackObject.z < 0.4 || trackObject.z > - yWorld/4)return;
-    objy = canvas.height - ((yWorld/trackObject.z) + (horizon))  - trackObject.spriteHeight/trackObject.z;
-    objBaseY = parseInt(objy + trackObject.spriteHeight/trackObject.z);
-    objx = trackXs[objBaseY] - (((canvas.width - trackWidth)/2 - trackObject.x + carX + (trackObject.spriteWidth/2))/trackObject.z)
-    ctx.drawImage(img, trackObject.spriteOffsetX ,trackObject.spriteOffsetY,
-                    trackObject.spriteWidth, trackObject.spriteHeight, objx, objy ,
-                    (trackObject.spriteWidth)/trackObject.z, (trackObject.spriteHeight)/trackObject.z);
-
+function drawTrackObjects(trackObjects, canvas, ctx, img, yWorld, horizon, carX, trackXs, trackWidth){
+	for(i = 0; i < trackObjects.length; i ++){
+        trackObject = trackObjects[i];
+		objy = canvas.height - ((yWorld/trackObject.z) + (horizon))  - trackObject.spriteHeight/trackObject.z;
+		objBaseY = parseInt(objy + trackObject.spriteHeight/trackObject.z);
+		objx = trackXs[objBaseY] - (((canvas.width - trackWidth)/2 - trackObject.x + myCar.x + (trackObject.spriteWidth/2))/trackObject.z);
+		
+		sx = trackObject.spriteOffsetX;
+		sy = trackObject.spriteOffsetY;
+		sw = trackObject.spriteWidth;
+		sh = trackObject.spriteHeight;
+		
+		dx = objx; 
+		dy = objy;
+		dw = (trackObject.spriteWidth)/trackObject.z;
+		dh = (trackObject.spriteHeight)/trackObject.z;
+		ctx.drawImage(img, sx , sy, sw, sh, dx, dy, dw, dh) ;
+    }
 }
-
-
-var frameOffsetX = new Array();
-var frameOffsetY = new Array();
+function updateTrackObjects(trackObjects,dt){
+    for(i = 0; i < trackObjects.length; i++){
+        trackObject = trackObjects[i];
+        trackObject.z = trackObject.z - dpos + trackObject.speed * dt *speedScale;
+        if(trackObject.z <= myCar.z + dpos && trackObject.z > myCar.z - dpos){
+            if(myCar.x > trackObject.x - trackObject.width/2 &&
+                myCar.x < trackObject.x + trackObject.width/2){
+                speed = 0;
+                myCar.x = 0;
+            }            
+        }
+    }
+}
 
 var straight = 0;
 var left = 1;
 var right = 2;
 
-frameOffsetX[straight] = 94;
-frameOffsetY[straight] = 7;
 
-frameOffsetX[left] = 6;
-frameOffsetY[left] = 7;
+var carFrameOffsetX = new Array();
+var carFrameOffsetY = new Array();
 
-frameOffsetX[right] = 357;
-frameOffsetY[right] = 7;
+carFrameOffsetX[straight] = 94;
+carFrameOffsetY[straight] = 7;
+
+carFrameOffsetX[left] = 6;
+carFrameOffsetY[left] = 7;
+
+carFrameOffsetX[right] = 357;
+carFrameOffsetY[right] = 7;
 
 function MyCar(yWorld,horizon){
     this.z = 0.9;
@@ -62,12 +84,7 @@ function MyCar(yWorld,horizon){
         carimg = document.getElementById('car')
         objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - (this.height/2)/this.z;
         objx = canvas.width/2;
-        ctx.drawImage(carimg, frameOffsetX[this.turnState],frameOffsetY[this.turnState],this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
-        if(this.isBreaking){
-        /*    ctx.fillStyle = "rgba(256,0,0,0.6)";
-            ctx.fillRect (this.x - (this.width/2)/this.z + 20, objy + (2.75*this.height/4)/this.z, 20, 7);
-            ctx.fillRect (this.x + (this.width/2)/this.z - 34, objy + (2.75*this.height/4)/this.z, 20 , 7);*/
-        }
+        ctx.drawImage(carimg, carFrameOffsetX[this.turnState],carFrameOffsetY[this.turnState],this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
     }
 }
 

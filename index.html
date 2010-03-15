@@ -1,10 +1,10 @@
 <html>
 <head>
 <title> teste canvas</title>
-<script src="track.js"></script>
+<script src="gameObjects.js"></script>
 <script src="main.js"></script>
 <style type="text/css">
-#track,#trackdark,#car,#trackobjects{
+#track,#trackdark,#car,#trackobjects,#trackdata{
 display:none;
 }
 
@@ -19,7 +19,8 @@ margin:auto;
 <img src="nolines2.png" id="trackdark">
 <img src="ferrari.png" id="car">
 <img src="trackobjects.png" id="trackobjects">
-<div id="zs">Aperte A para acelerar e Z para brecar, aperte &#060;, e .&#062; para virar</div>
+<div id="zs">Press A to accelerate, Z to break.<br>
+Press &#060;, and .&#062; to turn</div>
 <div><!--
 Editor de pista:<br>
 (: curva suave para a direita<br>
@@ -28,6 +29,7 @@ Editor de pista:<br>
 &#062;: curva fechada para a esquerda<br>
 | e qualquer outro simbolo: pista reta<br>
 cada caractere corresponde a um trecho continuo da mesma cor.<br> !-->
+<br>
 <div id="trackdata">|||||||||||||||||||||||)>>>>>>>>>>>>>>>>>>>>>>>>)|(((((|||||||||||||||||||||))))))))))))))))))||||||||||||||||||||||||||||||(((((((((((((((((((((((((()))))))))))))))))))))))))))))|||||||||||||||(((((((((((((||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(((((((((((((((((((((((((((((((((((((((((((((((>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<
 </div>
 <!-- input type="button" value="atualiza" onclick="updateTrackData()" !-->
