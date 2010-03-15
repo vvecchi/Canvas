@@ -1,3 +1,7 @@
+var straight = 0;
+var left = 1;
+var right = 2;
+
 function Segment(){
     this.y = 0;
     this.z = 0;
@@ -13,16 +17,17 @@ function TrackObject() {
     this.speed = 0;
     this.spriteOffsetX = 0;
     this.spriteOffsetY = 0;
-    this.spriteWidth = 60;
-    this.spriteHeight = 175;
+    this.spriteWidth = 30;
+    this.spriteHeight = 87;
+	this.spriteScale = 2;
     this.width = 60;
 }
 function drawTrackObjects(trackObjects, canvas, ctx, img, yWorld, horizon, carX, trackXs, trackWidth){
 	for(i = 0; i < trackObjects.length; i ++){
         trackObject = trackObjects[i];
-		objy = canvas.height - ((yWorld/trackObject.z) + (horizon))  - trackObject.spriteHeight/trackObject.z;
-		objBaseY = parseInt(objy + trackObject.spriteHeight/trackObject.z);
-		objx = trackXs[objBaseY] - (((canvas.width - trackWidth)/2 - trackObject.x + myCar.x + (trackObject.spriteWidth/2))/trackObject.z);
+		objy = canvas.height - ((yWorld/trackObject.z) + (horizon))  - trackObject.spriteHeight/trackObject.z * trackObject.spriteScale;
+		objBaseY = parseInt(objy + trackObject.spriteHeight/trackObject.z* trackObject.spriteScale);
+		objx = trackXs[objBaseY] - (((canvas.width - trackWidth)/2 - trackObject.x + myCar.x + (trackObject.spriteWidth/2 * trackObject.spriteScale))/trackObject.z);
 		
 		sx = trackObject.spriteOffsetX;
 		sy = trackObject.spriteOffsetY;
@@ -31,8 +36,8 @@ function drawTrackObjects(trackObjects, canvas, ctx, img, yWorld, horizon, carX,
 		
 		dx = objx; 
 		dy = objy;
-		dw = (trackObject.spriteWidth)/trackObject.z;
-		dh = (trackObject.spriteHeight)/trackObject.z;
+		dw = (trackObject.spriteWidth)/trackObject.z * trackObject.spriteScale;
+		dh = (trackObject.spriteHeight)/trackObject.z * trackObject.spriteScale;
 		ctx.drawImage(img, sx , sy, sw, sh, dx, dy, dw, dh) ;
     }
 }
@@ -50,22 +55,6 @@ function updateTrackObjects(trackObjects,dt){
     }
 }
 
-var straight = 0;
-var left = 1;
-var right = 2;
-
-
-var carFrameOffsetX = new Array();
-var carFrameOffsetY = new Array();
-
-carFrameOffsetX[straight] = 94;
-carFrameOffsetY[straight] = 7;
-
-carFrameOffsetX[left] = 6;
-carFrameOffsetY[left] = 7;
-
-carFrameOffsetX[right] = 357;
-carFrameOffsetY[right] = 7;
 
 function MyCar(yWorld,horizon){
     this.z = 0.9;
@@ -73,11 +62,24 @@ function MyCar(yWorld,horizon){
     this.width = 86;
     this.height = 50;
   
-    this.isBreaking = false;
+    this.isBraking = false;
     this.turnState = straight;
         
     this.yWorld = yWorld;
     this.horizon = horizon;
+	
+	var carFrameOffsetX = new Array();
+	var carFrameOffsetY = new Array();
+
+	carFrameOffsetX[straight] = 94;
+	carFrameOffsetY[straight] = 7;
+
+	carFrameOffsetX[left] = 6;
+	carFrameOffsetY[left] = 7;
+
+	carFrameOffsetX[right] = 357;
+	carFrameOffsetY[right] = 7;
+
     
     
     this.draw = function(canvas, ctx){
@@ -127,20 +129,10 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
 			trackObject = new TrackObject();
 			trackObject.x = -trackWidth/2 - 10;
 			trackObject.z = segment.z;
-			trackObject.spriteOffsetX = 60;
+			trackObject.spriteOffsetX = 30;
 			trackObjectsArray.push(trackObject);
        }
-        if(i > 4 && i < 30){
-            segment.curve = 0.01
-            
-        }
-        else if(i > 35 && i < 80){
-            segment.curve = -0.01
-        }
-        else if(i > 95){
-            segment.curve = 0.005;
-        }
-        segments[i] = segment;
+       segments[i] = segment;
     }
     this.carSegment = segments[0];
     var firstIndex = 0;
@@ -154,7 +146,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
         var y = canvas.height - 1;
         y = parseInt(y);
         ctx.drawImage(img,0, 0, img.width, 1, 0, 0, canvas.width, canvas.height);
-        ddx = 0;
+        dx = 0;
         trackX = canvas.width/2 ;
         for(i = 0; i < numsegs -1; i++){
             var curIndex = (i + firstIndex) % numsegs;
@@ -170,10 +162,10 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
                 drawImg = imgdark;
             }
             for(ypos = y; ypos > y + sizeOnScreen;  ypos--){
-                trackX +=  ddx;
+                trackX +=  dx;
                 trackXs[ypos] = trackX;
                 if(zs[ypos] > 0.75){// car.z
-                    ddx += segments[curIndex].curve;
+                    dx += segments[curIndex].curve;
                 }
                 ctx.drawImage(drawImg,1,200,1,1,0,ypos,canvas.width,1);
                 ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);
@@ -181,6 +173,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             y = ynew;
         }
     }
+	
 	this.getCurveAmount = function(index){
 		var curveAmount = 0;
 		switch(trackData.charAt(index%trackData.length)){
@@ -249,7 +242,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
 					if(this.trackObjectsArray[i].z < 0.1){
 						this.trackObjectsArray[i].z = segments[lastIndex].z;
 						this.trackObjectsArray[i].x = - this.trackWidth/2 - 10;
-						this.trackObjectsArray[i].spriteOffsetX = 60;
+						this.trackObjectsArray[i].spriteOffsetX = 30;
 						break;
 					}
 				}
@@ -257,7 +250,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
 				  var trackObject = new TrackObject();
 					trackObject.x = - this.trackWidth/2 - 10;
 					trackObject.z = segments[lastIndex].z;
-					trackObject.spriteOffsetX = 60;
+					trackObject.spriteOffsetX = 30;
 					this.trackObjectsArray.push(trackObject);
 				}
 			}

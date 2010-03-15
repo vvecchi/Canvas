@@ -4,7 +4,7 @@ var speed = 0;
 var maxspeed = 200;
 var speedScale = 0.05
 var isAccelerating = false;
-var isBreaking = false;
+var isBraking = false;
 var isTurningLeft = false;
 var isTurninhRight = false;
 var acceleration = 50;
@@ -29,6 +29,9 @@ var trackXs = new Array();
 var lastFrame = new Date().getTime();
 
 function draw(){
+	//draw the sky
+	var img = document.getElementById('track');
+    ctx.drawImage(img,0, 0, 1, 1, 0, 0, canvas.width, canvas.height);
     track.draw(canvas,ctx,myCar.x,trackXs);
     trackObjects.sort(function(a,b){return a.z - b.z});
 	var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4 && a.z < -yWorld/4});
@@ -42,7 +45,7 @@ document.onkeydown =function(e) {
         isAccelerating = true;
     }
     if(e.which == breakKey){
-        isBreaking = true;
+        isBraking = true;
     }
     if(e.which == leftKey){
         isTurningLeft = true;
@@ -57,7 +60,7 @@ document.onkeyup = function(e) {
         isAccelerating = false;
     }
     if(e.which == breakKey){
-        isBreaking = false;
+        isBraking = false;
     }
     if(e.which == leftKey){
         isTurningLeft = false;
@@ -73,13 +76,13 @@ function handleInput(dt){
             speed += acceleration*dt;
         }
     }
-    if(isBreaking){
+    if(isBraking){
         speed -=  deceleration*dt
         if(speed < 0){
             speed = 0;
         }
     }
-    if(!isAccelerating && !isBreaking){
+    if(!isAccelerating && !isBraking){
         speed -=  acceleration/2*dt
         if(speed < 0){
             speed = 0;
@@ -110,13 +113,12 @@ function handleInput(dt){
 	thisFrame = new Date().getTime();
     var dt = (thisFrame - this.lastFrame)/1000;
     this.lastFrame = thisFrame;
-	
 	handleInput(dt);
     //update player car
 	dpos = speed * dt *speedScale;
     pos = pos + dpos;
     myCar.x -= track.carSegment.curve*speed *100*dt;
-    myCar.isBreaking = isBreaking;
+    myCar.isBraking = isBraking;
 	//update track
 	track.update(pos);
 	updateTrackObjects(trackObjects,dt);
