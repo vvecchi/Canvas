@@ -29,15 +29,15 @@ var trackXs = new Array();
 var lastFrame = new Date().getTime();
 
 function draw(){
-	//draw the sky
-	var img = document.getElementById('track');
+    //draw the sky
+    var img = document.getElementById('track');
     ctx.drawImage(img,0, 0, 1, 1, 0, 0, canvas.width, canvas.height);
     track.draw(canvas,ctx,myCar.x,trackXs);
     trackObjects.sort(function(a,b){return a.z - b.z});
-	var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4 && a.z < -yWorld/4});
+    var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4 && a.z < -yWorld/4});
     myCar.draw(canvas,ctx);
     var img = document.getElementById('trackobjects');
-	drawTrackObjects(drawableTrackObjects, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
+    drawTrackObjects(drawableTrackObjects, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
  }
 
 document.onkeydown =function(e) {
@@ -110,28 +110,28 @@ function handleInput(dt){
  
  function update(){
     //handle time elapsed
-	thisFrame = new Date().getTime();
+    thisFrame = new Date().getTime();
     var dt = (thisFrame - this.lastFrame)/1000;
     this.lastFrame = thisFrame;
-	handleInput(dt);
+    handleInput(dt);
     //update player car
-	dpos = speed * dt *speedScale;
+    dpos = speed * dt *speedScale;
     pos = pos + dpos;
     myCar.x -= track.carSegment.curve*speed *100*dt;
     myCar.isBraking = isBraking;
-	//update track
-	track.update(pos);
-	updateTrackObjects(trackObjects,dt);
+    //update track
+    track.update(pos);
+    updateTrackObjects(trackObjects,dt);
 
  }
  
  
  function init(){
-	canvas = document.getElementById('canvas');
-	ctx = canvas.getContext('2d');
-	trackData = document.getElementById('trackdata').innerText;
-	track.initTrackData(trackData);
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+    trackData = document.getElementById('trackdata').innerText;
+    track.initTrackData(trackData);
     canvas.width = screenWidth;
     canvas.height = screenHeight;
-	setInterval(function(){update();draw();}, MSECONDS_BETWEEN_FRAMES);
+    setInterval(function(){update();draw();}, MSECONDS_BETWEEN_FRAMES);
  }
