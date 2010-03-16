@@ -117,13 +117,13 @@ function handleInput(dt){
     //update player car
     dpos = speed * dt *speedScale;
     pos = pos + dpos;
-    myCar.x -= track.carSegment.curve*speed *100*dt;
+    myCar.x -= track.carSegment.curve*speed *90*dt;
     myCar.isBraking = isBraking;
     //update track
     track.update(pos);
     updateTrackObjects(trackObjects,dt);
     
-    backgroundX += track.carSegment.curve*speed *100*dt;
+    backgroundX += track.carSegment.curve*speed *90*dt;
 
  }
  
