@@ -8,7 +8,7 @@ var isBraking = false;
 var isTurningLeft = false;
 var isTurninhRight = false;
 var acceleration = 50;
-var deceleration = 100;
+var deceleration = 150;
 var turnAmount = 300;
 
 var accelerateKey = 65;
@@ -27,11 +27,11 @@ var track = new Track(yWorld,horizon,screenWidth,screenHeight,trackObjects,track
 var myCar = new MyCar(yWorld,horizon,screenWidth,screenHeight);
 var trackXs = new Array();
 var lastFrame = new Date().getTime();
+var backgroundX = 0;
+
 
 function draw(){
-    //draw the sky
-    var img = document.getElementById('track');
-    ctx.drawImage(img,0, 0, 1, 1, 0, 0, canvas.width, canvas.height);
+    drawBackground(backgroundX);
     track.draw(canvas,ctx,myCar.x,trackXs);
     trackObjects.sort(function(a,b){return a.z - b.z});
     var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4 && a.z < -yWorld/4});
@@ -122,6 +122,8 @@ function handleInput(dt){
     //update track
     track.update(pos);
     updateTrackObjects(trackObjects,dt);
+    
+    backgroundX += track.carSegment.curve*speed *100*dt;
 
  }
  
