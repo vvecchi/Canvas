@@ -55,7 +55,7 @@ function updateTrackObjects(trackObjects,dt){
     }
 }
 
-function drawBackground(backgroundX){
+function drawBackground(){
     var img = document.getElementById('panorama');
     var drawWidth = canvas.width;
     backgroundX = backgroundX%img.width;
@@ -178,7 +178,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
                 trackX +=  dx;
                 trackXs[ypos] = trackX;
                 if(zs[ypos] > 0.75){// if the track position is after car.z (above the car on sreen) make the road bend
-                    dx += segments[curIndex].curve;
+                    dx += segments[curIndex].curve * zs[ypos];
                 }
                 ctx.drawImage(drawImg,1,200,1,1,0,ypos,canvas.width,1);//draw the grass
                 ctx.drawImage(drawImg, 0, 220, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);//draw the track, with some perspective transform

@@ -31,10 +31,10 @@ var backgroundX = 0;
 
 
 function draw(){
-    drawBackground(backgroundX);
+    drawBackground();
     track.draw(canvas,ctx,myCar.x,trackXs);
-    trackObjects.sort(function(a,b){return a.z - b.z});
     var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4 && a.z < -yWorld/4});
+    drawableTrackObjects.sort(function(a,b){return b.z - a.z});
     myCar.draw(canvas,ctx);
     var img = document.getElementById('trackobjects');
     drawTrackObjects(drawableTrackObjects, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
@@ -117,7 +117,7 @@ function handleInput(dt){
     //update player car
     dpos = speed * dt *speedScale;
     pos = pos + dpos;
-    myCar.x -= track.carSegment.curve*speed *90*dt;
+    myCar.x -= track.carSegment.curve*speed *120*dt;
     myCar.isBraking = isBraking;
     //update track
     track.update(pos);
