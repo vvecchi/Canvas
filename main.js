@@ -33,7 +33,7 @@ var backgroundX = 0;
 function draw(){
     drawBackground();
     track.draw(canvas,ctx,myCar.x,trackXs);
-    var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4 && a.z < -yWorld/4});
+    var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4});
     drawableTrackObjects.sort(function(a,b){return b.z - a.z});
     myCar.draw(canvas,ctx);
     var img = document.getElementById('trackobjects');
@@ -95,10 +95,12 @@ function handleInput(dt){
         }
         if(isTurningLeft){
             myCar.x -= turnAmount* dt * turnSpeedScale;
+            backgroundX -= 1/8*turnAmount*dt * turnSpeedScale;
             myCar.turnState = left;
         }
         if(isTurninhRight){
             myCar.x += turnAmount*dt * turnSpeedScale;
+            backgroundX += 1/8*turnAmount*dt * turnSpeedScale;
             myCar.turnState = right;
         }
     }
@@ -117,14 +119,13 @@ function handleInput(dt){
     //update player car
     dpos = speed * dt *speedScale;
     pos = pos + dpos;
-    myCar.x -= track.carSegment.curve*speed *120*dt;
+    myCar.x -= track.carSegment.curve*speed *100*dt;
+    
     myCar.isBraking = isBraking;
     //update track
     track.update(pos);
     updateTrackObjects(trackObjects,dt);
-    
-    backgroundX += track.carSegment.curve*speed *90*dt;
-
+    document.getElementById('framerate').innerText = parseInt(1/dt);
  }
  
  
