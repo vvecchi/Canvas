@@ -5,13 +5,21 @@ var right = 2;
 //I have these kinds of objects
 //0 palmtree left
 //1 palmtree right
+//2 car straight
+//3 car left
+//4 car right
 //but in the array the object is defined at type * 2 and its reduced version at type * 2 + 1
 
-
-offsetsX = [ 0,64,30,79];
-offsetsY = [ 0, 0, 0, 0];
-Widths   = [30,15,30,15];
-Heights  = [87,44,87,44];
+/*
+offsetsX = [ 0,64,30,79,125,206];
+offsetsY = [ 0, 0, 0, 0,  0,  0];
+Widths   = [30,15,30,15, 79, 42];
+Heights  = [87,44,87,44, 50, 25];
+*/
+offsetsX = [ 0,64,30,79, 95,176];
+offsetsY = [ 0, 0, 0, 0,  0,  0];
+Widths   = [30,15,30,15, 80, 38];
+Heights  = [87,44,87,44, 50, 25];
 
 function TrackObject() {
     this.x = 0;
@@ -64,7 +72,7 @@ function updateTrackObjects(trackObjects,dt){
     }
 }
 
-function drawBackground(){
+function drawBackground(canvas,ctx,backgroundX){
     var img = document.getElementById('panorama');
     var drawWidth = canvas.width;
     backgroundX = backgroundX%img.width;
@@ -170,6 +178,16 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             trackObject.spriteType = 1;
             trackObjectsArray.push(trackObject);
         }
+		if(Math.random() > 0.9)
+		{
+			trackObject = new TrackObject();
+			trackObject.spriteScale = 1;
+			trackObject.x = 0;
+			trackObject.speed = 100;
+			trackObject.z = segment.z;
+			trackObject.spriteType = 2;
+            trackObjectsArray.push(trackObject);
+		}
        segments[i] = segment;
     }
     this.carSegment = segments[0];//car segment is the segment where the car is
@@ -256,11 +274,33 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             // try to reuse an track object, if not available create one
             
             for(i = 0; i < this.trackObjectsArray.length; i ++){
-                if(this.trackObjectsArray[i].z < 0.1){
+                if(this.trackObjectsArray[i].z < 0.1 && this.trackObjectsArray[i].spriteType < 2){
                     this.trackObjectsArray[i].z = segments[lastIndex].z;
                     break;
                 }
+				
             }
+			if(Math.random() > 0.9)
+			{
+				trackObject = 0;
+				for(i = 0; i < this.trackObjectsArray.length; i ++){
+					if(this.trackObjectsArray[i].z < 0.1 && this.trackObjectsArray[i].spriteType == 2){
+						this.trackObjectsArray[i].z = segments[lastIndex].z;
+						trackObject = this.trackObjectsArray[i];
+						break;
+					}
+					
+				}
+				if(trackObject == 0){
+					trackObject = new TrackObject();
+					trackObjectsArray.push(trackObject);
+				}
+				trackObject.spriteScale = 1;
+				trackObject.x = 0;
+				trackObject.speed = 100;
+				trackObject.spriteType = 2;
+				
+			}
         }
         // update which the segment the car is in
         for(i = 0; i < numsegs - 1; i++){

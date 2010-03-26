@@ -9,19 +9,34 @@ display:none;
 }
 
 .body{
-margin:auto;
+margin:0 auto;
 }
+
+#personalinfo{
+font-size:8pt;
+}
+
+#framerate{
+font-size:8pt;
+}
+
+#description{
+border: 1px outset #000;
+width:320px;
+overflow: auto} 
+#instructions{font: bold 12px arial} 
+#description p{font: normal 12px arial}
 </style>
 </head>
 <body  onload="init();">
-<div id="framerate"></div>
 <canvas id="canvas" width="640" height="240"></canvas>
+<div id="framerate"></div>
 <img src="nolines.png" id="track"  >
 <img src="nolines2.png" id="trackdark">
 <img src="ferrari.png" id="car">
 <img src="trackobjects.png" id="trackobjects">
 <img src="panorama.jpg" id="panorama">
-<div id="zs">Press A to accelerate, Z to brake.<br>
+<div id="instructions">Press A to accelerate, Z to brake.<br>
 Press &#060;, and .&#062; to turn</div>
 <div><!--
 Editor de pista:<br>
@@ -38,9 +53,9 @@ cada caractere corresponde a um trecho continuo da mesma cor.<br> !-->
 </div>
 <!-- input type="button" value="atualiza" onclick="updateTrackData()" !-->
 </div>
-<div>
-<p>Fot this I´m using the HTML canvas tag, 
-this game is to be a clone of old school racers using pseudo 3d graphics. 
+<div id="description">
+<p>For this game I´m using the HTML canvas tag, currently only runs on Chrome and Safari.
+This game is to be a clone of old school racers using pseudo 3d graphics. 
 </p>
 
 <p>I´m using the information on Lou's Pseudo 3d Page:
@@ -56,7 +71,11 @@ And the horizon is from: <a href="http://www.panoramicearth.com/">Panoramic Eart
 <p>I have done all the coding using notepad++ and vim, and used the chrome developer tools, specially the javascript console, for debugging.
 All the editing of the images was done using GIMP and MS-paint.</p>
 
+<p>The repository for this project can be found at: <a href="http://github.com/vvecchi/Canvas">http://github.com/vvecchi/Canvas</a>
 
-Play the game here: <a href="http://vvecchi.tecnologia.ws/">http://vvecchi.tecnologia.ws/</a>
 <div>
+<div id="personalinfo">
+Vinicius Vecchi - vvecchi at gmail.com
+<a href="http://docs.google.com/View?id=dcrwv7sj_24c2kjcqfh">CV</a>
+</div>
 </body>

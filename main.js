@@ -31,7 +31,7 @@ var backgroundX = 0;
 
 
 function draw(){
-    drawBackground();
+    drawBackground(canvas,ctx,backgroundX);
     track.draw(canvas,ctx,myCar.x,trackXs);
     var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4});
     drawableTrackObjects.sort(function(a,b){return b.z - a.z});
@@ -125,7 +125,7 @@ function handleInput(dt){
     //update track
     track.update(pos);
     updateTrackObjects(trackObjects,dt);
-    document.getElementById('framerate').innerText = parseInt(1/dt);
+    document.getElementById('framerate').innerText = "fps: "+parseInt(1/dt);
  }
  
  
