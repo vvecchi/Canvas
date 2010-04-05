@@ -1,4 +1,4 @@
-var MSECONDS_BETWEEN_FRAMES = 1000/60;
+var MSECONDS_BETWEEN_FRAMES = 1000/60;//1 for the highest possible fps, good for testing, 1000/60 for 60 fps
 var pos = 0;
 var speed = 0;
 var maxspeed = 200;
@@ -33,11 +33,14 @@ var backgroundX = 0;
 function draw(){
     drawBackground(canvas,ctx,backgroundX);
     track.draw(canvas,ctx,myCar.x,trackXs);
-    var drawableTrackObjects = trackObjects.filter(function(a){return a.z > 0.4});
-    drawableTrackObjects.sort(function(a,b){return b.z - a.z});
-    myCar.draw(canvas,ctx);
+    var drawableTrackObjectsFront = trackObjects.filter(function(a){return a.z > 0.4 && a.z < 0.65});
+	var drawableTrackObjectsBack = trackObjects.filter(function(a){return a.z >= 0.65});
+    drawableTrackObjectsFront.sort(function(a,b){return b.z - a.z});
+	drawableTrackObjectsBack.sort(function(a,b){return b.z - a.z});
     var img = document.getElementById('trackobjects');
-    drawTrackObjects(drawableTrackObjects, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
+	drawTrackObjects(drawableTrackObjectsBack, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
+	myCar.draw(canvas,ctx);
+    drawTrackObjects(drawableTrackObjectsFront, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
  }
 
 document.onkeydown =function(e) {

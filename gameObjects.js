@@ -5,17 +5,10 @@ var right = 2;
 //I have these kinds of objects
 //0 palmtree left
 //1 palmtree right
-//2 car straight
-//3 car left
-//4 car right
+//2 blue car straight
 //but in the array the object is defined at type * 2 and its reduced version at type * 2 + 1
 
-/*
-offsetsX = [ 0,64,30,79,125,206];
-offsetsY = [ 0, 0, 0, 0,  0,  0];
-Widths   = [30,15,30,15, 79, 42];
-Heights  = [87,44,87,44, 50, 25];
-*/
+
 offsetsX = [ 0,64,30,79, 95,176];
 offsetsY = [ 0, 0, 0, 0,  0,  0];
 Widths   = [30,15,30,15, 80, 38];
@@ -89,7 +82,7 @@ function drawBackground(canvas,ctx,backgroundX){
     }
 }
 function MyCar(yWorld,horizon){
-    this.z = 0.9;
+    this.z = 0.75;
     this.x = 0;
     this.width = 86;
     this.height = 50;
@@ -116,7 +109,7 @@ function MyCar(yWorld,horizon){
     
     this.draw = function(canvas, ctx){
         carimg = document.getElementById('car')
-        objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - (this.height/2)/this.z;
+        objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - (this.height)/this.z;
         objx = canvas.width/2;
         ctx.drawImage(carimg, carFrameOffsetX[this.turnState],carFrameOffsetY[this.turnState],this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
     }
