@@ -82,7 +82,7 @@ function drawBackground(canvas,ctx,backgroundX){
     }
 }
 function MyCar(yWorld,horizon){
-    this.z = 0.68;
+    this.z = 0.75;
     this.x = 0;
     this.width = 86;
     this.height = 50;
@@ -209,7 +209,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             for(ypos = y; ypos > y + sizeOnScreen;  ypos--){
                 trackX +=  dx;
                 trackXs[ypos] = trackX;
-                if(zs[ypos] > 0.75){ // if the track position is after car.z (above the car on sreen) make the road bend
+                if(zs[ypos] > 0){ // if the track position is after car.z (above the car on sreen) make the road bend
                     dx += segments[curIndex].curve * zs[ypos] /2;
                 }
                 ctx.drawImage(drawImg,1,200,1,1,0,ypos,canvas.width,1);//draw the grass

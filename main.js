@@ -20,7 +20,7 @@ var screenWidth = 320;
 var screenHeight = 240;
 var trackWidth = 290;
 var horizon = screenHeight/2;
-var yWorld = - 80;
+var yWorld = - 75;
 
 var trackObjects = new Array();
 var track = new Track(yWorld,horizon,screenWidth,screenHeight,trackObjects,trackWidth);
