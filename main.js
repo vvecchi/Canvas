@@ -33,8 +33,8 @@ var backgroundX = 0;
 function draw(){
     drawBackground(canvas,ctx,backgroundX);
     track.draw(canvas,ctx,myCar.x,trackXs);
-    var drawableTrackObjectsFront = trackObjects.filter(function(a){return a.z > 0.4 && a.z < 0.65});
-	var drawableTrackObjectsBack = trackObjects.filter(function(a){return a.z >= 0.65});
+    var drawableTrackObjectsFront = trackObjects.filter(function(a){return a.z > 0.2 && a.z < myCar.z});
+	var drawableTrackObjectsBack = trackObjects.filter(function(a){return a.z >= myCar.z});
     drawableTrackObjectsFront.sort(function(a,b){return b.z - a.z});
 	drawableTrackObjectsBack.sort(function(a,b){return b.z - a.z});
     var img = document.getElementById('trackobjects');
@@ -42,6 +42,8 @@ function draw(){
 	myCar.draw(canvas,ctx);
     drawTrackObjects(drawableTrackObjectsFront, canvas, ctx, img, yWorld, horizon, myCar.x, trackXs, trackWidth);
  }
+
+//================= input handling =============================================//
 
 document.onkeydown =function(e) {
     if(e.which == accelerateKey){
@@ -112,22 +114,29 @@ function handleInput(dt){
         myCar.turnState = straight;
     }
 }
- 
+//========================================
+
+
+ // update the game world
  function update(){
     //handle time elapsed
     thisFrame = new Date().getTime();
     var dt = (thisFrame - this.lastFrame)/1000;
     this.lastFrame = thisFrame;
+    
     handleInput(dt);
+    
     //update player car
     dpos = speed * dt *speedScale;
     pos = pos + dpos;
     myCar.x -= track.carSegment.curve*speed *100*dt;
-    
     myCar.isBraking = isBraking;
-    //update track
+    
     track.update(pos);
+    
     updateTrackObjects(trackObjects,dt);
+    
+    
     document.getElementById('framerate').innerText = "fps: "+parseInt(1/dt);
  }
  
