@@ -129,12 +129,12 @@ function handleInput(dt){
     //update player car
     dpos = speed * dt *speedScale;
     pos = pos + dpos;
-    myCar.x -= track.carSegment.curve*speed *100*dt;
+    myCar.x -= 2*track.carSegment.curve*speed *100*dt;
     myCar.isBraking = isBraking;
     
     track.update(pos);
     
-    updateTrackObjects(trackObjects,dt);
+    updateTrackObjects(trackObjects,dt,pos);
     
     
     document.getElementById('framerate').innerText = "fps: "+parseInt(1/dt);

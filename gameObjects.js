@@ -18,6 +18,7 @@ function TrackObject() {
     this.x = 0;
     this.y = 0;
     this.z = 0;
+    this.pos = 0;
     this.speed = 0;
     this.spriteType = 0;
     this.spriteScale = 2;
@@ -50,10 +51,11 @@ function drawTrackObjects(trackObjects, canvas, ctx, img, yWorld, horizon, carX,
         ctx.drawImage(img, sx , sy, sw, sh, dx, dy, dw, dh) ;
     }
 }
-function updateTrackObjects(trackObjects,dt){
+function updateTrackObjects(trackObjects,dt,pos){
     for(i = 0; i < trackObjects.length; i++){
         trackObject = trackObjects[i];
-        trackObject.z = trackObject.z - dpos + trackObject.speed * dt *speedScale;
+        trackObject.z = trackObject.pos - pos;
+        trackObject.pos  = trackObject.pos  + trackObject.speed * dt *speedScale
         //check if the car is colliding with this object
         if(trackObject.z <= myCar.z + dpos && trackObject.z > myCar.z - dpos){
             if(myCar.x > trackObject.x - trackObject.width/2 &&
@@ -86,7 +88,7 @@ function MyCar(yWorld,horizon){
     this.x = 0;
     this.width = 86;
     this.height = 50;
-  
+ 
     this.isBraking = false;
     this.turnState = straight;
         
@@ -161,13 +163,13 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
         if(segment.shaded){
             var trackObject = new TrackObject();
             trackObject.x = trackWidth/2 + 10;
-            trackObject.z = segment.z;
+            trackObject.pos = segment.z;
             trackObject.spriteType = 0;
             trackObjectsArray.push(trackObject);
         }else{
             trackObject = new TrackObject();
             trackObject.x = -trackWidth/2 - 10;
-            trackObject.z = segment.z;
+            trackObject.pos = segment.z;
             trackObject.spriteType = 1;
             trackObjectsArray.push(trackObject);
         }
@@ -177,7 +179,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
 			trackObject.spriteScale = 1;
 			trackObject.x = 0;
 			trackObject.speed = 100;
-			trackObject.z = segment.z;
+			trackObject.pos = segment.z;
 			trackObject.spriteType = 2;
             trackObjectsArray.push(trackObject);
 		}
@@ -210,7 +212,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
                 trackX +=  dx;
                 trackXs[ypos] = trackX;
                 if(zs[ypos] > 0){ // if the track position is after car.z (above the car on sreen) make the road bend
-                    dx += segments[curIndex].curve * zs[ypos] /2;
+                    dx += segments[curIndex].curve * zs[ypos];
                 }
                 ctx.drawImage(drawImg,1,200,1,1,0,ypos,canvas.width,1);//draw the grass
                 ctx.drawImage(drawImg, 0, 226, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);//draw the track, with some perspective transform
@@ -223,16 +225,16 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
         var curveAmount = 0;
         switch(trackData.charAt(index%trackData.length)){
             case '(':
-                curveAmount = 0.01;
+                curveAmount = 0.005;
                 break;
             case ')':
-                curveAmount = -0.01;
+                curveAmount = -0.005;
                 break;
             case '<':
-                curveAmount = 0.02;
+                curveAmount = 0.01;
                 break;
             case '>':
-                curveAmount = -0.02;
+                curveAmount = -0.01;
                 break;
             case '|':
             default:
@@ -268,7 +270,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             
             for(i = 0; i < this.trackObjectsArray.length; i ++){
                 if(this.trackObjectsArray[i].z < 0.2 && this.trackObjectsArray[i].spriteType < 2){
-                    this.trackObjectsArray[i].z = segments[lastIndex].z;
+                    this.trackObjectsArray[i].pos = lastPos + segments[lastIndex].z;
                     break;
                 }
             }
@@ -277,7 +279,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
 				trackObject = 0;
 				for(i = 0; i < this.trackObjectsArray.length; i ++){
 					if(this.trackObjectsArray[i].z < 0.2 && this.trackObjectsArray[i].spriteType == 2){
-						this.trackObjectsArray[i].z = segments[lastIndex].z;
+						this.trackObjectsArray[i].pos = lastPos + segments[lastIndex].z;
 						trackObject = this.trackObjectsArray[i];
 						break;
 					}
