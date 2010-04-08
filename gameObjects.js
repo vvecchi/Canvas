@@ -12,7 +12,7 @@ var right = 2;
 offsetsX = [ 0,64,30,79, 95,176];
 offsetsY = [ 0, 0, 0, 0,  0,  0];
 Widths   = [30,15,30,15, 80, 38];
-Heights  = [87,44,87,44, 50, 25];
+Heights  = [84,42,84,42, 50, 25];
 
 function TrackObject() {
     this.x = 0;
@@ -246,7 +246,7 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
     this.initTrackData = function(trackData){
         this.trackData = trackData;
         for( i = 0; i < numsegs; i ++){
-            segments[i].curve = this.getCurveAmount(i);
+            segments[i].curve = this.getCurveAmount(parseInt(segments[i].z/segsize));
         }
         this.trackDataIndex = i;
     }
@@ -263,13 +263,13 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
             segments[firstIndex].z = segments[lastIndex].z + segsize;
             lastIndex = firstIndex;
             firstIndex = (firstIndex + 1) % numsegs;
-            segments[lastIndex].curve = this.getCurveAmount(this.trackDataIndex);
-            this.trackDataIndex += 1;
+            var trackDataIndex = parseInt(pos/segsize);
+            segments[lastIndex].curve = this.getCurveAmount(trackDataIndex );
             // put a roadsied object going along this segment
             // try to reuse an track object, if not available create one
             
             for(i = 0; i < this.trackObjectsArray.length; i ++){
-                if(this.trackObjectsArray[i].z < 0.2 && this.trackObjectsArray[i].spriteType < 2){
+                if(this.trackObjectsArray[i].z < 0.2 && this.trackObjectsArray[i].spriteType == segments[lastIndex].shaded){
                     this.trackObjectsArray[i].pos = lastPos + segments[lastIndex].z;
                     break;
                 }

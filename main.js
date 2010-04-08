@@ -1,4 +1,4 @@
-var MSECONDS_BETWEEN_FRAMES = 1000/60;//1 for the highest possible fps, good for testing, 1000/60 for 60 fps
+var MSECONDS_BETWEEN_FRAMES = 1000/600;//1 for the highest possible fps, good for testing, 1000/60 for 60 fps
 var pos = 0;
 var speed = 0;
 var maxspeed = 200;
@@ -34,7 +34,7 @@ function draw(){
     drawBackground(canvas,ctx,backgroundX);
     track.draw(canvas,ctx,myCar.x,trackXs);
     var drawableTrackObjectsFront = trackObjects.filter(function(a){return a.z > 0.2 && a.z < myCar.z});
-	var drawableTrackObjectsBack = trackObjects.filter(function(a){return a.z >= myCar.z});
+	var drawableTrackObjectsBack = trackObjects.filter(function(a){return a.z >= myCar.z && a.z < -yWorld});
     drawableTrackObjectsFront.sort(function(a,b){return b.z - a.z});
 	drawableTrackObjectsBack.sort(function(a,b){return b.z - a.z});
     var img = document.getElementById('trackobjects');
