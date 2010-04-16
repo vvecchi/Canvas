@@ -31,44 +31,12 @@ var backgroundX = 0;
 
 
 function doTheDrawing(ctx,canvas,img,sx,sy,sw,sh,dx,dy,dw,dh){
-	horRatio = dw/sw;
-	verRatio = dh/sh;
-	overX = (dx + dw) - canvas.width ;
-	underX = 0 - dx;
-	overY = (dy + dh) - canvas.height;
-	underY = 0 - dy;
-	if(overX > 0 && overX < dw)
-	{
-		sw = sw - overX/horRatio;
-		dw = dw - overX;
-	}
-	if(underX > 0 && underX < dw)
-	{
-		sx = sx + underX/horRatio;
-		sw = sw - underX/horRatio;
-		dx = dx + underX;
-		dw = dw - underX;
-	}
-	if(overY > 0 && overY < dh)
-	{
-		sh = sh - overY/verRatio;
-		dh = dh - overY;
-	}
-	if(underY > 0 && underY < dh)
-	{
-		sy = sy + underY*verRatio;
-		sh = sh - underY*verRatio;
-		dy = dy + underY;
-		dh = dh - underY;
-	}
-	if( sx >= 0 && sy>= 0 && sw > 0 && sh > 0 && dw > 0 && dw > 0){
 		try{
 			ctx.drawImage(img, sx , sy, sw, sh, dx, dy, dw, dh) ;	
 		}
 		catch(e){
 		
 		}
-	}
 }
 
 function draw(){
