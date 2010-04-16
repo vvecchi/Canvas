@@ -48,7 +48,7 @@ function drawTrackObjects(trackObjects, canvas, ctx, img, yWorld, horizon, carX,
         dy = objy;
         dw = (Widths[type])/trackObject.z * scale;
         dh = (Heights[type])/trackObject.z * scale;
-        ctx.drawImage(img, sx , sy, sw, sh, dx, dy, dw, dh) ;
+       doTheDrawing(ctx,canvas,img, sx , sy, sw, sh, dx, dy, dw, dh) ;
     }
 }
 function updateTrackObjects(trackObjects,dt,pos){
@@ -78,9 +78,9 @@ function drawBackground(canvas,ctx,backgroundX){
     if(img.width - backgroundX < canvas.width){
         drawWidth = img.width - backgroundX;
     }
-    ctx.drawImage(img, backgroundX, 0, drawWidth, img.height, 0, 0, drawWidth, canvas.height);
+   doTheDrawing(ctx,canvas,img, backgroundX, 0, drawWidth, img.height, 0, 0, drawWidth, canvas.height);
     if(drawWidth < canvas.width){
-        ctx.drawImage(img, 0, 0, canvas.width - drawWidth, img.height, drawWidth, 0, canvas.width - drawWidth, canvas.height);
+       doTheDrawing(ctx,canvas,img, 0, 0, canvas.width - drawWidth, img.height, drawWidth, 0, canvas.width - drawWidth, canvas.height);
     }
 }
 function MyCar(yWorld,horizon){
@@ -113,7 +113,7 @@ function MyCar(yWorld,horizon){
         carimg = document.getElementById('car')
         objy = canvas.height - ((this.yWorld/this.z) + (this.horizon))  - (this.height)/this.z;
         objx = canvas.width/2;
-        ctx.drawImage(carimg, carFrameOffsetX[this.turnState],carFrameOffsetY[this.turnState],this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
+       doTheDrawing(ctx,canvas,carimg, carFrameOffsetX[this.turnState],carFrameOffsetY[this.turnState],this.width,this.height,objx - (this.width/2)/this.z , objy, (this.width)/this.z, (this.height)/this.z);
     }
 }
 
@@ -214,35 +214,14 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
                 if(zs[ypos] > 0){ // if the track position is after car.z (above the car on sreen) make the road bend
                     dx += segments[curIndex].curve * zs[ypos];
                 }
-                ctx.drawImage(drawImg,1,200,1,1,0,ypos,canvas.width,1);//draw the grass
-                ctx.drawImage(drawImg, 0, 226, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);//draw the track, with some perspective transform
+               doTheDrawing(ctx,canvas,drawImg,1,200,1,1,0,ypos,canvas.width,1);//draw the grass
+               doTheDrawing(ctx,canvas,drawImg, 0, 226, drawImg.width,1, trackX - ((canvas.width/2 + carX)/zs[ypos]), ypos, canvas.width/zs[ypos],1);//draw the track, with some perspective transform
             }
             y = ynew;
         }
     }
     
-    this.getCurveAmount = function(index){
-        var curveAmount = 0;
-        switch(trackData.charAt(index%trackData.length)){
-            case '(':
-                curveAmount = 0.005;
-                break;
-            case ')':
-                curveAmount = -0.005;
-                break;
-            case '<':
-                curveAmount = 0.01;
-                break;
-            case '>':
-                curveAmount = -0.01;
-                break;
-            case '|':
-            default:
-                break;
-        }
-        return curveAmount;
-    }
-    
+  
     this.initTrackData = function(trackData){
         this.trackData = trackData;
         for( i = 0; i < numsegs; i ++){
@@ -250,7 +229,34 @@ function Track(yWorld,horizon, width, height,trackObjectsArray,trackWidth){
         }
         this.trackDataIndex = i;
     }
-    
+    this.getCurveAmount = function(index){
+        var curveAmount = 0;
+        try{
+            switch(trackData.charAt(index%this.trackData.length)){
+                case '(':
+                    curveAmount = 0.005;
+                    break;
+                case ')':
+                    curveAmount = -0.005;
+                    break;
+                case '<':
+                    curveAmount = 0.01;
+                    break;
+                case '>':
+                    curveAmount = -0.01;
+                    break;
+                case '|':
+                default:
+                    break;
+            }
+	    }
+	    catch(e)
+	    {
+	    	
+	    }
+        return curveAmount;
+    }
+      
     this.update = function(pos){
         dPos = lastPos - pos;
         lastPos = pos;

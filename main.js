@@ -30,10 +30,51 @@ var lastFrame = new Date().getTime();
 var backgroundX = 0;
 
 
+function doTheDrawing(ctx,canvas,img,sx,sy,sw,sh,dx,dy,dw,dh){
+	horRatio = dw/sw;
+	verRatio = dh/sh;
+	overX = (dx + dw) - canvas.width ;
+	underX = 0 - dx;
+	overY = (dy + dh) - canvas.height;
+	underY = 0 - dy;
+	if(overX > 0 && overX < dw)
+	{
+		sw = sw - overX/horRatio;
+		dw = dw - overX;
+	}
+	if(underX > 0 && underX < dw)
+	{
+		sx = sx + underX/horRatio;
+		sw = sw - underX/horRatio;
+		dx = dx + underX;
+		dw = dw - underX;
+	}
+	if(overY > 0 && overY < dh)
+	{
+		sh = sh - overY/verRatio;
+		dh = dh - overY;
+	}
+	if(underY > 0 && underY < dh)
+	{
+		sy = sy + underY*verRatio;
+		sh = sh - underY*verRatio;
+		dy = dy + underY;
+		dh = dh - underY;
+	}
+	if( sx >= 0 && sy>= 0 && sw > 0 && sh > 0 && dw > 0 && dw > 0){
+		try{
+			ctx.drawImage(img, sx , sy, sw, sh, dx, dy, dw, dh) ;	
+		}
+		catch(e){
+		
+		}
+	}
+}
+
 function draw(){
     drawBackground(canvas,ctx,backgroundX);
     track.draw(canvas,ctx,myCar.x,trackXs);
-    var drawableTrackObjectsFront = trackObjects.filter(function(a){return a.z > 0.2 && a.z < myCar.z});
+    var drawableTrackObjectsFront = trackObjects.filter(function(a){return a.z > 0.1 && a.z < myCar.z});
 	var drawableTrackObjectsBack = trackObjects.filter(function(a){return a.z >= myCar.z && a.z < -yWorld});
     drawableTrackObjectsFront.sort(function(a,b){return b.z - a.z});
 	drawableTrackObjectsBack.sort(function(a,b){return b.z - a.z});
@@ -136,15 +177,26 @@ function handleInput(dt){
     
     updateTrackObjects(trackObjects,dt,pos);
     
-    
-    document.getElementById('framerate').innerText = "fps: "+parseInt(1/dt);
+    if(document.all){
+	    document.getElementById('framerate').innerText = "fps: "+parseInt(1/dt);
+	}
+	else{
+		document.getElementById('framerate').textContent = "fps: "+parseInt(1/dt);
+	}
  }
  
  
  function init(){
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    trackData = document.getElementById('trackdata').innerText;
+    if(document.all){
+    	trackData = document.getElementById('trackdata').innerText;
+	}
+	else{
+		trackData = document.getElementById('trackdata').textContent;
+	}
+
+
     track.initTrackData(trackData);
     canvas.width = screenWidth;
     canvas.height = screenHeight;
